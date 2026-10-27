@@ -88,6 +88,8 @@ main{display:flex;flex-direction:column;gap:14px;min-width:0}
 .pill{font-size:9.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border:1px solid currentColor;align-self:center}
 .pill.ok{color:var(--ok)}.pill.warn{color:var(--warn)}
 .flag{font-size:13px;color:var(--warn);margin:0}
+.kdpset{margin:0;font-size:12.5px;line-height:1.6;color:var(--muted);border-left:2px solid var(--gold);padding:4px 0 4px 12px}
+.kdpset b{color:var(--gold);font-weight:500}
 #book{display:flex;flex-direction:column;align-items:center;gap:22px}
 .sheet{position:relative;overflow:hidden;outline:1px solid var(--gold-muted);outline-offset:4px;box-shadow:0 10px 30px rgba(0,0,0,.6);background:var(--paper)}
 .cap{font-family:var(--a-display);font-size:9px;font-weight:600;color:var(--gold-dim);letter-spacing:.24em;text-transform:uppercase;margin-top:-10px;text-align:center}
@@ -95,7 +97,7 @@ main{display:flex;flex-direction:column;gap:14px;min-width:0}
 /* ---------- printed page ---------- */
 .page{background:var(--paper);color:var(--ink);font-family:var(--f-body);position:relative;transform-origin:top left;overflow:hidden}
 .pin{position:absolute;display:flex;flex-direction:column}
-.folio{position:absolute;bottom:.32in;font-family:var(--f-body);font-size:10pt;color:var(--ink-soft)}
+.folio{position:absolute;bottom:.4in;font-family:var(--f-body);font-size:10pt;color:var(--ink-soft)}
 .ph{display:flex;flex-direction:column;gap:2px;margin-bottom:.18in;text-align:center}
 .eyebrow{font-family:var(--f-ui);font-size:7.5pt;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
 .ptitle{font-family:var(--f-display);font-size:20pt;line-height:1.1;margin:0;text-wrap:balance}
@@ -199,7 +201,7 @@ main{display:flex;flex-direction:column;gap:14px;min-width:0}
 .cdims{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 .cdims b{color:var(--gold);font-weight:500}
 .cwrap{overflow:hidden;outline:1px solid var(--gold-muted);outline-offset:4px;box-shadow:0 10px 30px rgba(0,0,0,.6);align-self:center}
-.cover{position:relative;transform-origin:top left;overflow:hidden;font-family:var(--f-body)}
+.cover{position:relative;transform-origin:top left;overflow:hidden;font-family:var(--f-body);-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .cv-panel{position:absolute;top:0;bottom:0}
 .cv-front{display:flex;flex-direction:column;align-items:center;text-align:center}
 .cv-frame{position:absolute;border:1.5px solid var(--cv-accent)}
@@ -253,7 +255,8 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
   .viewseg{display:none!important}
 }
 @media print{
-  .top,.rulegold,.tabbar,aside,.bar,.cap,.flag,.viewseg{display:none!important}
+  *,*::before,*::after{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+  .top,.rulegold,.tabbar,aside,.bar,.cap,.flag,.viewseg,.kdpset{display:none!important}
   :root{padding:0!important}
   body{margin:0!important}
   .sheet,.cwrap{outline:none!important;box-shadow:none!important}
@@ -432,6 +435,7 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
       <button type="button" id="v-int" aria-pressed="true">Interior</button>
       <button type="button" id="v-cov" aria-pressed="false">Cover</button>
     </div>
+    <p class="kdpset" id="kdpset"></p>
     <p class="flag" id="flag" hidden></p>
     <div id="book"></div>
     <div id="coverView" hidden>
@@ -956,9 +960,9 @@ function build(){
     const n=i+1, odd=n%2===1, left=odd?T.inn:T.out, right=odd?T.out:T.inn;
     let frz="";
     if(ORN==="kemetic"&&pg.kind!=="blank"&&pg.kind!=="copyright"){
-      const h=pg.kind==="title"?.2:.13, top=Math.max(.28,T.top-.34-(pg.kind==="title"?.06:0));
+      const h=pg.kind==="title"?.2:.13, top=Math.max(.375,T.top-.34-(pg.kind==="title"?.06:0));
       frz=`<div class="frzwrap" style="top:${top}in;left:${left}in;right:${right}in">${frieze("kh"+i+"t",h,["currentColor"])}</div>`;
-      if(pg.kind==="title") frz+=`<div class="frzwrap flip" style="bottom:${Math.max(.28,T.bot-.4)}in;left:${left}in;right:${right}in">${frieze("kh"+i+"b",h,["currentColor"])}</div>`;
+      if(pg.kind==="title") frz+=`<div class="frzwrap flip" style="bottom:${Math.max(.375,T.bot-.4)}in;left:${left}in;right:${right}in">${frieze("kh"+i+"b",h,["currentColor"])}</div>`;
     }
     const folio=pg.folio?`<div class="folio" style="${odd?`right:${T.out}in`:`left:${T.out}in`}">${n}</div>`:"";
     return `<div class="sheet" data-i="${i}" data-kind="${pg.kind}" data-w="${D.W}" data-h="${D.H}"><div class="page${S.large?" lp":""}" style="width:${T.w}in;height:${T.h}in"><div class="pin" style="top:${T.top}in;bottom:${T.bot}in;left:${left}in;right:${right}in"></div>${frz}${folio}</div></div><div class="cap">${n} · ${esc(pg.cap)}</div>`;
@@ -980,6 +984,7 @@ function build(){
   $("#flag").hidden=!flags.length;$("#flag").textContent=flags.join(" ");
   const kdp=$("#kdp"), okKdp=np>=KDP_MIN&&np%2===0&&!res.reused&&!res.unclean&&res.list.length;
   kdp.className="pill "+(okKdp?"ok":"warn");kdp.textContent=okKdp?"KDP ready":"Check notes";
+  $("#kdpset").innerHTML=`In KDP, choose: <b>Trim ${S.trim==="letter"?"8.5 × 11 in":"6 × 9 in"}</b> · <b>No bleed</b> · <b>Black &amp; white interior, ${S.paper} paper</b> · export the cover at this same trim. This book is <b>${np} pages</b>.`;
   fit();save();
   if(pview==="cover") renderCover();
 }
