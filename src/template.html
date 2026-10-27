@@ -191,6 +191,8 @@ main{display:flex;flex-direction:column;gap:14px;min-width:0}
 .viewseg button+button{border-left:1px solid var(--gold-muted)}
 .viewseg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg)}
 #coverView{display:flex;flex-direction:column;gap:12px;min-width:0}
+.cvbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.cvbar .viewseg button{padding:7px 14px;font-size:9px}
 .cdims{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 .cdims b{color:var(--gold);font-weight:500}
 .cwrap{overflow:hidden;outline:1px solid var(--gold-muted);outline-offset:4px;box-shadow:0 10px 30px rgba(0,0,0,.6);align-self:center}
@@ -240,8 +242,9 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
 @media print{
   body:not(.print-cover) #coverView{display:none!important}
   body.print-cover #coverView{display:block!important}
-  body.print-cover .cdims,body.print-cover .guide{display:none!important}
+  body.print-cover .cdims,body.print-cover .guide,body.print-cover .cvbar,body.print-cover #covernote{display:none!important}
   body.print-cover .cwrap{width:auto!important;height:auto!important;box-shadow:none}
+  body.print-cover .cwrap{overflow:visible!important}
   body.print-cover .cover{transform:none!important;width:100vw!important;height:100vh!important}
   body.print-cover .app,body.print-cover main{padding:0!important;margin:0!important;gap:0!important}
   .viewseg{display:none!important}
@@ -410,6 +413,13 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
     <p class="flag" id="flag" hidden></p>
     <div id="book"></div>
     <div id="coverView" hidden>
+      <div class="cvbar">
+        <div class="viewseg" role="group" aria-label="Cover preview">
+          <button type="button" id="cz-full" aria-pressed="true">Full wrap</button>
+          <button type="button" id="cz-front" aria-pressed="false">Front</button>
+          <button type="button" id="cz-back" aria-pressed="false">Back</button>
+        </div>
+      </div>
       <div class="cdims" id="cdims"></div>
       <div class="cwrap" id="cwrap"><div class="cover" id="cover"></div></div>
       <p class="note" id="covernote"></p>
@@ -1029,13 +1039,27 @@ function renderCover(){
     "The spine width updates whenever the page count changes. Upload the cover only after the interior is final. Guides show on screen only and never print.";
   fitCover();
 }
+let coverZoom="full";
 function fitCover(){
-  const S=settings(), C=coverDims(S), avail=Math.min($("#coverView").clientWidth,1000);
-  if(!avail) return;
-  const k=Math.min(1,avail/(C.W*PX));
-  $("#cwrap").style.width=C.W*PX*k+"px";$("#cwrap").style.height=C.H*PX*k+"px";
-  $("#cover").style.transform=`scale(${k})`;
+  const cv=$("#coverView"), avail=Math.min(cv.clientWidth,1000);
+  if(!avail) return false;
+  const S=settings(), C=coverDims(S), b=C.K.bleed;
+  // Region to show, in inches: whole wrap, or one panel with its bleed.
+  const reg=coverZoom==="front"?{x:b+C.T.w+C.spine,w:C.T.w+b}:coverZoom==="back"?{x:0,w:C.T.w+b}:{x:0,w:C.W};
+  const k=Math.min(coverZoom==="full"?1:1.4,avail/(reg.w*PX));
+  $("#cwrap").style.width=reg.w*PX*k+"px";$("#cwrap").style.height=C.H*PX*k+"px";
+  $("#cover").style.transform=`translateX(${-reg.x*PX*k}px) scale(${k})`;
+  return true;
 }
+function setCoverZoom(z){
+  coverZoom=z;["full","front","back"].forEach(id=>$("#cz-"+id).setAttribute("aria-pressed",id===z));
+  try{localStorage.setItem("spp-czoom",z)}catch(e){}
+  fitCover();
+}
+["full","front","back"].forEach(z=>$("#cz-"+z).onclick=()=>setCoverZoom(z));
+try{const z=localStorage.getItem("spp-czoom");if(["full","front","back"].includes(z))coverZoom=z}catch(e){}
+// Refit whenever the cover area changes size, including when it reappears after being hidden.
+if("ResizeObserver" in window) new ResizeObserver(()=>{if(pview==="cover")fitCover()}).observe($("#coverView"));
 function setPView(v){
   pview=v;
   $("#v-int").setAttribute("aria-pressed",v==="interior");$("#v-cov").setAttribute("aria-pressed",v==="cover");
@@ -1053,6 +1077,9 @@ function printCover(){
   window.addEventListener("afterprint",done);
   window.print();
 }
+let savedZoom=null;try{savedZoom=localStorage.getItem("spp-czoom")}catch(e){}
+if(!savedZoom&&window.matchMedia&&matchMedia("(max-width:600px)").matches) coverZoom="front";
+["full","front","back"].forEach(id=>$("#cz-"+id).setAttribute("aria-pressed",id===coverZoom));
 $("#v-int").onclick=()=>setPView("interior");
 $("#v-cov").onclick=()=>setPView("cover");
 
@@ -1083,7 +1110,7 @@ function setView(v){
   $("#tab-proofs").setAttribute("aria-selected",v==="proofs");
   try{localStorage.setItem("spp-view",v)}catch(e){}
   window.scrollTo(0,0);
-  if(v==="proofs") fit();
+  if(v==="proofs"){fit();if(pview==="cover")fitCover()}
 }
 $("#tab-settings").onclick=()=>setView("settings");
 $("#tab-proofs").onclick=()=>setView("proofs");
