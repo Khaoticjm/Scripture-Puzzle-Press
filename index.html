@@ -51,7 +51,9 @@ legend{font-family:var(--a-display);font-size:10px;font-weight:600;letter-spacin
 legend+*{clear:both}
 label.f{display:flex;flex-direction:column;gap:6px;font-size:10px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dim)}
 input[type=text]{font:inherit;font-size:14px;font-weight:300;letter-spacing:normal;text-transform:none;color:var(--fg);background:var(--card);border:1px solid var(--line);border-bottom-color:var(--gold-muted);border-radius:0;padding:10px 12px;min-width:0}
-input[type=text]:focus,textarea:focus{border-color:var(--gold);outline:none}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--gold);outline:none}
+select{font:inherit;font-size:14px;font-weight:300;letter-spacing:normal;text-transform:none;color:var(--fg);background:var(--card);border:1px solid var(--line);border-bottom-color:var(--gold-muted);border-radius:0;padding:10px 12px;min-width:0;width:100%;cursor:pointer}
+select:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 ::placeholder{color:var(--muted);opacity:.55}
 input[type=text]:focus-visible,button:focus-visible,.seg input:focus-visible+span,.chk input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .seg{display:flex;border:1px solid var(--gold-muted);overflow:hidden}
@@ -147,6 +149,7 @@ main{display:flex;flex-direction:column;gap:14px;min-width:0}
 .orn{display:flex;align-items:center;gap:.12in;color:var(--ink)}
 .orn::before,.orn::after{content:"";height:1px;width:.9in;background:currentColor}
 .orn i{width:.1in;height:.1in;border:1px solid currentColor;transform:rotate(45deg)}
+.tp .series{font-family:var(--f-ui);font-size:9pt;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--ink-soft)}
 .tp h1{font-family:var(--f-display);font-weight:400;font-size:34pt;line-height:1.08;margin:0;text-wrap:balance;letter-spacing:.02em}
 .tp .sub{font-style:italic;font-size:15pt;color:var(--ink-soft);margin:0;text-wrap:balance}
 .tp .by{font-family:var(--f-ui);font-size:10pt;letter-spacing:.2em;text-transform:uppercase;margin-top:.3in}
@@ -220,7 +223,7 @@ main{display:flex;flex-direction:column;gap:14px;min-width:0}
 .cv-blurb{margin:0;line-height:1.45}
 .cv-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.05in;font-family:var(--f-ui)}
 .cv-list li::before{content:"";display:inline-block;width:.07in;height:.07in;transform:rotate(45deg);border:1px solid var(--cv-accent);margin-right:.12in;vertical-align:1px}
-.cv-spine{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;white-space:nowrap;overflow:hidden;font-family:var(--f-display);gap:.25in}
+.cv-spine{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;white-space:nowrap;overflow:hidden;font-family:var(--f-display);gap:.3in;line-height:1;text-transform:uppercase;letter-spacing:.08em}
 .cv-spine .a{font-family:var(--f-ui);font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:.62em;color:var(--cv-accent)}
 .guide{position:absolute;pointer-events:none}
 .g-bleed{border:0 solid rgba(220,40,60,.28)}
@@ -238,7 +241,7 @@ textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .swatches i{display:block;width:100%;height:30px;border:2px solid transparent;outline:1px solid var(--line)}
 .swatches input:checked+span i{border-color:var(--accent);outline-color:var(--accent)}
 .swatches input:focus-visible+span i{outline:2px solid var(--accent);outline-offset:2px}
-@media (max-width:860px){textarea{font-size:16px}.viewseg button{padding:10px 18px;font-size:14px}}
+@media (max-width:860px){textarea,select{font-size:16px}.viewseg button{padding:10px 18px;font-size:14px}}
 
 body.print-cover #book,body.print-cover .cap{display:none!important}
 @media print{
@@ -332,9 +335,14 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
     </div>
 
     <fieldset>
-      <legend>Cover</legend>
-      <label class="f">Book title<input type="text" id="title" value="Hidden in the Word"></label>
-      <label class="f">Subtitle<input type="text" id="subtitle" value="Word Searches, Crosswords, Cryptograms &amp; Verse Puzzles"></label>
+      <legend>Book &amp; series</legend>
+      <label class="f">Start from<select id="preset"></select></label>
+      <div class="seedrow">
+        <label class="f">Series<input type="text" id="series" value="Stretch Forth"></label>
+        <label class="f" style="flex:.7">Volume<input type="text" id="volume" value="Special Edition" placeholder="e.g. Vol. 1"></label>
+      </div>
+      <label class="f">Book title<input type="text" id="title" value="From Cush to Calvary"></label>
+      <label class="f">Subtitle<input type="text" id="subtitle" value="The Complete Collection of Bible Word Searches, Crosswords &amp; Verse Puzzles"></label>
       <label class="f">Author<input type="text" id="author" placeholder="Your name"></label>
     </fieldset>
 
@@ -397,6 +405,10 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
       </div>
       <label class="f">Colour scheme</label>
       <div class="swatches" role="radiogroup" aria-label="Cover colour scheme" id="swatches"></div>
+      <label class="f">Back cover verse<select id="verse">
+        <option value="ps68">Psalm 68:31 · Ethiopia shall soon stretch out her hands</option>
+        <option value="ps119">Psalm 119:11 · Thy word have I hid in mine heart</option>
+      </select></label>
       <label class="f">Back cover description<textarea id="blurb" placeholder="Leave blank to use a description written from your settings."></textarea></label>
       <label class="chk"><input type="checkbox" id="guides" checked>Show trim, bleed and safe-zone guides</label>
       <button class="btn" type="button" id="printCover" hidden>Print cover / Save as PDF</button>
@@ -470,6 +482,20 @@ const PALETTES=[
   {id:"faience",name:"Faience",bg:"#0E4A47",ink:"#F3EBD9",accent:"#D9B45E",acc2:"#C9603A",alias:"olive"},
   {id:"carnelian",name:"Carnelian",bg:"#5B1E12",ink:"#F6EADB",accent:"#D8B063",acc2:"#4F86C9",alias:"wine"},
   {id:"papyrus",name:"Papyrus",bg:"#E8DABA",ink:"#2A1D0E",accent:"#8C2F1B",acc2:"#1F4E8C",alias:"vellum"}
+];
+const VERSES={
+  ps68:{text:"Princes shall come out of Egypt; Ethiopia shall soon stretch out her hands unto God.",ref:"Psalm 68:31"},
+  ps119:{text:"Thy word have I hid in mine heart, that I might not sin against thee.",ref:"Psalm 119:11"}
+};
+const SUB="Word Searches, Crosswords & Verse Puzzles from the King James Bible";
+// Stretch Forth volume plan: one click sets title, themes, colours and verse.
+const PRESETS=[
+  {id:"v1",label:"Vol. 1 · Cush & Ethiopia",volume:"Vol. 1",title:"Cush & Ethiopia",themes:["cush","creation","noah","psalms","prophets"],pal:"sphinx"},
+  {id:"v2",label:"Vol. 2 · Out of Egypt",volume:"Vol. 2",title:"Out of Egypt",themes:["egypt","patriarchs","exodus","daniel","christmas"],pal:"lapis"},
+  {id:"v3",label:"Vol. 3 · The Queen of Sheba",volume:"Vol. 3",title:"The Queen of Sheba",themes:["sheba","wisdom","david","jesus","animals"],pal:"carnelian"},
+  {id:"v4",label:"Vol. 4 · Hagar & the God Who Sees",volume:"Vol. 4",title:"Hagar & the God Who Sees",themes:["hagar","women","disciples","spirit","parables"],pal:"faience"},
+  {id:"v5",label:"Vol. 5 · Simon of Cyrene",volume:"Vol. 5",title:"Simon of Cyrene",themes:["church","miracles","easter","paul","armor"],pal:"papyrus"},
+  {id:"se",label:"Special Edition · From Cush to Calvary",volume:"Special Edition",title:"From Cush to Calvary",subtitle:"The Complete Collection of Bible Word Searches, Crosswords & Verse Puzzles",themes:"all",pal:"sphinx",sets:1}
 ];
 const findPal=id=>PALETTES.find(p=>p.id===id||p.alias===id)||PALETTES[0];
 const AFRICA_IDS=["cush","egypt","sheba","hagar","church"];
@@ -674,6 +700,7 @@ $("#themes").innerHTML=`<div class="thgroup"><span class="thlab">Africa in the B
 <div class="thgroup"><span class="thlab">Stories &amp; teachings</span><div class="grid2">${THEMES.filter(t=>!AFRICA_IDS.includes(t.id)).map(thBox).join("")}</div></div>`;
 function settings(){
   return {title:$("#title").value.trim()||"Untitled",subtitle:$("#subtitle").value.trim(),author:$("#author").value.trim(),
+    series:$("#series").value.trim(),volume:$("#volume").value.trim(),verse:$("#verse").value,
     trim:$("input[name=trim]:checked").value,large:$("#large").checked,diff:$("input[name=diff]:checked").value,
     types:$$(".ptype:checked").map(x=>x.value),themes:$$(".th:checked").map(x=>x.value),
     sets:+$("input[name=sets]:checked").value,toc:$("#toc").checked,key:$("#key").checked,
@@ -690,6 +717,9 @@ function restore(){
   if(typeof S.title==="string")$("#title").value=S.title;
   if(typeof S.subtitle==="string")$("#subtitle").value=S.subtitle;
   if(typeof S.author==="string")$("#author").value=S.author;
+  if(typeof S.series==="string")$("#series").value=S.series;
+  if(typeof S.volume==="string")$("#volume").value=S.volume;
+  if(S.verse&&VERSES[S.verse])$("#verse").value=S.verse;
   set(`input[name=trim][value="${S.trim}"]`,true);
   set(`input[name=diff][value="${S.diff}"]`,true);
   set(`input[name=sets][value="${S.sets}"]`,true);
@@ -739,6 +769,7 @@ function buildPuzzles(S){
           const cfg=XW[S.trim+(S.large?"LP":"")], target=cfg.words[d.xw];
           const pool=shuffle(theme.words.filter(w=>theme.clues&&theme.clues[w]&&w.length>=3&&w.length<=cfg.max),R).sort((a,b)=>wuse.get(a)-wuse.get(b));
           p=makeCrossword(theme,pool,target,R,cfg.max);
+          for(let t=target-1;!p&&t>=Math.max(5,target-4);t--) p=makeCrossword(theme,pool,t,R,cfg.max);
           if(!p){xwShort++;continue}
           p.words.forEach(x=>wuse.set(x.w,wuse.get(x.w)+1));
           if(p.words.length<target) xwShort++;
@@ -836,14 +867,15 @@ function renderAnswer(p,gridPx){
   if(p.type==="crypto") return `<div class="ai">${h}<p>${esc(p.verse.text)} <i>(${esc(p.verse.ref)})</i></p></div>`;
   if(p.type==="fill") return `<div class="ai">${h}<p>${p.answers.map(esc).join(" · ")}</p></div>`;
 }
+function seriesLine(S,sep=" · "){return [S.series,S.volume].filter(Boolean).join(sep)}
 function titleHTML(){
   const S=settings();
   const o=ORN==="kemetic"?lotus(2.4):'<div class="orn"><i></i></div>';
-  return `<div class="tp">${o}<h1>${esc(S.title)}</h1>${S.subtitle?`<p class="sub">${esc(S.subtitle)}</p>`:""}${ORN==="kemetic"?lotus(1.1,"currentColor",false):o}${S.author?`<div class="by">${esc(S.author)}</div>`:""}<div class="meta">${state.count} puzzles · ${S.diff} · King James Version${S.large?" · Large print":""}</div></div>`;
+  return `<div class="tp">${seriesLine(S)?`<div class="series">${esc(seriesLine(S))}</div>`:""}${o}<h1>${esc(S.title)}</h1>${S.subtitle?`<p class="sub">${esc(S.subtitle)}</p>`:""}${ORN==="kemetic"?lotus(1.1,"currentColor",false):o}${S.author?`<div class="by">${esc(S.author)}</div>`:""}<div class="meta">${state.count} puzzles · ${S.diff} · King James Version${S.large?" · Large print":""}</div></div>`;
 }
 function copyrightHTML(){
   const S=settings(), yr=new Date().getFullYear();
-  return `<div class="cp"><p class="t">${esc(S.title)}</p>${S.subtitle?`<p class="s">${esc(S.subtitle)}</p>`:""}
+  return `<div class="cp"><p class="t">${esc(S.title)}</p>${S.subtitle?`<p class="s">${esc(S.subtitle)}</p>`:""}${S.series?`<p class="s">${esc(S.series)}${S.volume?`, ${esc(S.volume)}`:""}</p>`:""}
     <p>Copyright © ${yr}${S.author?" "+esc(S.author):""}. All rights reserved.</p>
     <p>No part of this book may be reproduced in any form without written permission from the publisher, except for brief quotations in reviews.</p>
     <p>Scripture quotations are from the King James Version of the Bible, which is in the public domain.</p>
@@ -981,7 +1013,8 @@ function defaultBlurb(S){
   const kinds=S.types.map(t=>({search:"word searches",crossword:"crosswords",scramble:"word scrambles",crypto:"verse cryptograms",fill:"verse fill-ins"}[t]));
   const list=kinds.length>1?kinds.slice(0,-1).join(", ")+" and "+kinds.at(-1):kinds[0]||"puzzles";
   const span=names.length>1?` across ${names.length} themes, from ${names[0]} to ${names.at(-1)}`:names.length?` on ${names[0]}`:"";
-  return `${n} puzzles drawn from the King James Bible: ${list}${span}. Every clue and verse is quoted from Scripture, and every puzzle has a full solution in the answer key.`;
+  const lead=S.series?`${S.volume&&/^vol/i.test(S.volume)?S.volume.replace(/^vol\.?\s*/i,"Volume ")+" of ":S.volume?`The ${S.volume} of `:""}${S.series}, a Bible puzzle series celebrating Africa in Scripture. `:"";
+  return `${lead}${n} puzzles drawn from the King James Bible: ${list}${span}. Every clue and verse is quoted from Scripture, and every puzzle has a full solution in the answer key.`;
 }
 function coverMotif(S,cols,rows,cellIn){
   // A small word-search panel with a word from the title circled.
@@ -1007,7 +1040,7 @@ function renderCover(){
     <div class="cv-frame" style="inset:${frameIn}in"></div>
     <div class="cv-frz" style="top:${frameIn+.14}in;left:${frameIn+.14}in;right:${frameIn+.14}in">${frieze("cvt",.2*sc+.08,[pal.accent,pal.acc2])}</div>
     <div class="cv-frz flip" style="bottom:${frameIn+.14}in;left:${frameIn+.14}in;right:${frameIn+.14}in">${frieze("cvb",.2*sc+.08,[pal.accent,pal.acc2])}</div>
-    <div class="cv-eyebrow" style="font-size:${pt(9.5)}">Bible Puzzle Book${S.large?" · Large Print":""}</div>
+    <div class="cv-eyebrow" style="font-size:${pt(9.5)}">${esc(seriesLine(S)||"Bible Puzzle Book")}${S.large?" · Large Print":""}</div>
     <div style="display:flex;flex-direction:column;align-items:center;gap:${.22*sc+.06}in">
       <h1 class="cv-title" style="font-size:${titlePt.toFixed(1)}pt">${esc(S.title)}</h1>
       ${lotus(1.5*sc+.35,pal.accent)}
@@ -1021,14 +1054,15 @@ function renderCover(){
   const kinds=S.types.map(t=>({search:"Word searches",crossword:"Crosswords with verse clues",scramble:"Word scrambles",crypto:"Verse cryptograms",fill:"Verse fill-ins"}[t]));
   const back=`<div class="cv-panel cv-back" style="left:${b}in;top:${b}in;width:${T.w}in;height:${T.h}in;padding:${.85*sc+.2}in ${.7*sc+.2}in ${bc.h+bc.inset+.35}in;gap:${.24*sc+.08}in">
     <div class="cv-frz" style="top:.42in;left:.42in;right:.42in">${frieze("cvk",.2*sc+.08,[pal.accent,pal.acc2])}</div>
-    <p class="cv-quote" style="font-size:${pt(19)}">“Thy word have I hid in mine heart, that I might not sin against thee.”<cite style="font-size:${pt(9)}">Psalm 119:11</cite></p>
+    <p class="cv-quote" style="font-size:${pt(19)}">“${(VERSES[S.verse]||VERSES.ps68).text}”<cite style="font-size:${pt(9)}">${(VERSES[S.verse]||VERSES.ps68).ref}</cite></p>
     <p class="cv-blurb" style="font-size:${pt(13.5)}">${esc(blurb)}</p>
     <ul class="cv-list" style="font-size:${pt(11)}">${kinds.map(k=>`<li>${k}</li>`).join("")}<li>${S.diff[0].toUpperCase()+S.diff.slice(1)} difficulty${S.large?", large print":""}</li><li>Complete answer key</li></ul>
   </div>`;
   // Spine
-  const spineFont=(C.spine-2*K.spineMargin)*.6*72;
+  // Capitals need only cap height, so the type can use nearly all of the width inside KDP's 1/16 in spine margins.
+  const spineFont=(C.spine-2*K.spineMargin)*72/.95;
   const spineOK=C.pages>=K.spineTextMin&&spineFont>=6;
-  const spine=`<div class="cv-panel cv-spine" style="left:${spineX}in;top:${b}in;width:${C.spine}in;height:${T.h}in;font-size:${Math.min(15,spineFont).toFixed(1)}pt">${spineOK?`<span>${esc(S.title)}</span>${S.author?`<span class="a">${esc(S.author)}</span>`:""}`:""}</div>`;
+  const spine=`<div class="cv-panel cv-spine" style="left:${spineX}in;top:${b}in;width:${C.spine}in;height:${T.h}in;font-size:${Math.min(15,spineFont).toFixed(1)}pt">${spineOK?`${S.series?`<span class="a">${esc(seriesLine(S," "))}</span>`:""}<span>${esc(S.title)}</span>${S.author?`<span class="a">${esc(S.author)}</span>`:""}`:""}</div>`;
   // Guides (screen only)
   let g="";
   if(S.guides){
@@ -1047,6 +1081,15 @@ function renderCover(){
   const el=$("#cover");
   el.style.cssText=`width:${C.W}in;height:${C.H}in;background:${pal.bg};color:${pal.ink};--cv-bg:${pal.bg};--cv-ink:${pal.ink};--cv-accent:${pal.accent}`;
   el.innerHTML=back+spine+front+g;
+  // Keep spine text inside the spine's length (with 0.25 in clear at each end): shrink, then drop the author if needed.
+  const sp=el.querySelector(".cv-spine");
+  if(sp&&spineOK&&sp.clientHeight){
+    let fs=parseFloat(sp.style.fontSize);const room=sp.clientHeight-.5*PX;
+    const len=()=>[...sp.children].reduce((t,k)=>t+k.offsetHeight,0)+(sp.children.length-1)*.3*PX;
+    while(len()>room&&fs>6){fs-=.5;sp.style.fontSize=fs+"pt"}
+    if(len()>room){const a=sp.querySelectorAll(".a");if(a.length)a[a.length-1].remove()}
+    sp.style.alignItems="center";
+  }
   $("#cdims").innerHTML=`<span>Full cover <b>${C.W.toFixed(3)} × ${C.H.toFixed(3)} in</b></span><span>Spine <b>${C.spine.toFixed(3)} in</b></span><span><b>${C.pages}</b> pages, ${S.paper} paper</span><span>Trim ${S.trim==="letter"?"8.5 × 11":"6 × 9"} in</span>`;
   $("#covernote").textContent=(spineOK?"":C.pages<K.spineTextMin?`The spine is blank: KDP allows spine text only from ${K.spineTextMin} pages, and this book has ${C.pages}. `:"The spine is too narrow for readable text, so it is left blank. ")+
     "The spine width updates whenever the page count changes. Upload the cover only after the interior is final. Guides show on screen only and never print.";
@@ -1096,8 +1139,21 @@ if(!savedZoom&&window.matchMedia&&matchMedia("(max-width:600px)").matches) cover
 $("#v-int").onclick=()=>setPView("interior");
 $("#v-cov").onclick=()=>setPView("cover");
 
+/* ---------- presets ---------- */
+$("#preset").innerHTML=`<option value="">Custom (keep my settings)</option>`+PRESETS.map(p=>`<option value="${p.id}">${esc(p.label)}</option>`).join("");
+function applyPreset(id){
+  const P=PRESETS.find(p=>p.id===id); if(!P) return;
+  $("#series").value="Stretch Forth";$("#volume").value=P.volume;$("#title").value=P.title;$("#subtitle").value=P.subtitle||SUB;$("#verse").value="ps68";
+  $$(".th").forEach(x=>x.checked=P.themes==="all"||P.themes.includes(x.value));
+  const pal=$("#pal-"+P.pal);if(pal)pal.checked=true;
+  const sets=$("#s"+(P.sets||3));if(sets)sets.checked=true;
+  $$(".ptype").forEach(x=>x.checked=true);
+  build();
+}
+$("#preset").addEventListener("change",e=>{applyPreset(e.target.value);e.target.value="";});
+
 /* ---------- events ---------- */
-const META=new Set(["title","subtitle","author","blurb"]);
+const META=new Set(["title","subtitle","author","blurb","series","volume","verse"]);
 const COVER_ONLY=new Set(["guides"]);
 const COVER_NAMES=new Set(["paper","pal"]);
 let tm;const later=()=>{clearTimeout(tm);tm=setTimeout(build,150)};

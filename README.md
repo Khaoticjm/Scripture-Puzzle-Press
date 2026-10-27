@@ -19,6 +19,21 @@ A SPHINX Global Enterprises product. Scripture Puzzle Press builds print-ready B
 
 Every verse and crossword clue is copied from the King James Version text, never typed by hand.
 
+## The Stretch Forth series
+
+The app ships with one-click presets for the series, named for Psalm 68:31 ("Ethiopia shall soon stretch out her hands unto God"). Each volume uses five themes, and the five volumes together use all 25 themes once.
+
+| Volume | Title | Themes |
+|---|---|---|
+| Vol. 1 | Cush & Ethiopia | Cush & Ethiopia, Creation, Noah, Psalms, The Prophets |
+| Vol. 2 | Out of Egypt | Egypt in Scripture, The Patriarchs, The Exodus, Daniel, The Nativity |
+| Vol. 3 | The Queen of Sheba | The Queen of Sheba, Proverbs & Wisdom, David & Goliath, Life of Jesus, Animals |
+| Vol. 4 | Hagar & the God Who Sees | Hagar, Women of the Bible, The Twelve, Fruit of the Spirit, The Parables |
+| Vol. 5 | Simon of Cyrene | Africa in the Early Church, Miracles, The Resurrection, Paul's Journeys, Armour of God |
+| Special Edition | From Cush to Calvary | All 25 themes |
+
+At 3 sets per theme, each volume has 75 puzzles and runs 92–106 pages, which is enough for spine text. The series name and volume print on the title page, copyright page, front cover, spine and back-cover description.
+
 ## Use it
 
 Open `index.html` in Chrome or Edge, or enable GitHub Pages on this repo (Settings → Pages → deploy from `main`, root folder).
