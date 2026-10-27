@@ -1,0 +1,1101 @@
+<title>Scripture Puzzle Press</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400;1,500&family=Inter:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Marcellus&display=swap">
+<style>
+/* Layout: workbench sidebar of book settings beside a stack of true-scale page proofs. */
+:root{
+  /* SPHINX Global system: gold on black, ivory text, square corners, 1px gold-tinted rules. */
+  --bg:#0A0A0A; --panel:#111111; --card:#161616; --fg:#F5F0E8; --muted:#B8B0A0; --line:#2A2218;
+  --gold:#C8A84B; --gold-light:#E8C97A; --gold-dim:#8A6E2F; --gold-muted:#4A3A1A;
+  --lapis:#4F7FD0; --faience:#45B3A8; --carnelian:#CF6542;
+  --accent:#C8A84B; --accent-fg:#0A0A0A; --gilt:#8A6E2F; --ok:#4FCB86; --warn:#E89A4A;
+  --paper:#FFFFFF; --ink:#111111; --ink-soft:#555555; --ink-faint:#CFCFCF; --hl:#DADADA;
+  --a-display:"Cinzel","Trajan Pro",Georgia,serif;
+  --a-head:"Cormorant Garamond","Garamond",Georgia,serif;
+  --a-ui:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-display:"Marcellus","Trajan Pro",Georgia,serif;
+  --f-body:"Crimson Pro",Georgia,"Times New Roman",serif;
+  --f-ui:"Archivo",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--a-ui);font-weight:300;font-size:14px}
+.top{max-width:1280px;margin:0 auto;padding-block:20px 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.top .mark{width:52px;height:52px;flex:none}
+.wm{display:flex;flex-direction:column;gap:3px;min-width:0;margin-right:auto}
+.wm b{font-family:var(--a-display);font-weight:700;font-size:21px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);line-height:1.1}
+.wm span{font-size:10px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;color:var(--gold-dim)}
+.top .tag{font-family:var(--a-head);font-style:italic;font-size:17px;color:var(--muted)}
+.top .tag em{color:var(--gold)}
+.rulegold{max-width:1280px;margin:14px auto 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));line-height:0}
+.rulegold .frz{opacity:.9}
+.app{display:grid;grid-template-columns:340px minmax(0,1fr);gap:28px;max-width:1280px;margin:0 auto;
+  padding-block:24px 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (max-width:860px){.app{grid-template-columns:minmax(0,1fr)}}
+
+aside{align-self:start;position:sticky;top:calc(16px + env(safe-area-inset-top,0px));display:flex;flex-direction:column;gap:18px;
+  background:var(--panel);border:1px solid var(--line);padding:22px;max-height:calc(100vh - 32px);overflow:auto}
+@media (max-width:860px){aside{position:static;max-height:none}}
+.brand{display:flex;flex-direction:column;gap:6px}
+.brand h1{font-family:var(--a-head);font-weight:400;font-size:24px;margin:0;line-height:1.15;color:var(--fg)}
+.brand h1 em{color:var(--gold)}
+.brand p{margin:0;color:var(--muted);font-size:13px;line-height:1.6}
+fieldset{border:0;margin:0;padding:0;display:flex;flex-direction:column;gap:9px}
+aside>fieldset{padding-top:26px;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2056%2014%22%3E%3Crect%20x%3D%2210%22%20width%3D%2236%22%20height%3D%2214%22%20fill%3D%22%23111111%22/%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23C8A84B%22%20stroke-width%3D%221%22%20stroke-linejoin%3D%22round%22%20transform%3D%22translate%2828%200%29%20scale%28.62%29%20translate%28-60%200%29%22%3E%3Cpath%20d%3D%22M60%202%20Q66%2010%2060%2019%20Q54%2010%2060%202Z%22%20fill%3D%22%23C8A84B%22/%3E%3Cpath%20d%3D%22M60%2019%20Q51%209%2045%208%20Q48%2016%2060%2019Z%20M60%2019%20Q69%209%2075%208%20Q72%2016%2060%2019Z%22/%3E%3Cpath%20d%3D%22M60%2019%20Q46%2015%2040%2012%20Q46%2020%2060%2019Z%20M60%2019%20Q74%2015%2080%2012%20Q74%2020%2060%2019Z%22/%3E%3C/g%3E%3C/svg%3E") center top/56px 14px no-repeat,linear-gradient(to right,transparent,var(--gold-muted),transparent) 0 7px/100% 1px no-repeat}
+legend{font-family:var(--a-display);font-size:10px;font-weight:600;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin-bottom:10px;padding:0;float:left;width:100%}
+legend+*{clear:both}
+label.f{display:flex;flex-direction:column;gap:6px;font-size:10px;font-weight:400;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dim)}
+input[type=text]{font:inherit;font-size:14px;font-weight:300;letter-spacing:normal;text-transform:none;color:var(--fg);background:var(--card);border:1px solid var(--line);border-bottom-color:var(--gold-muted);border-radius:0;padding:10px 12px;min-width:0}
+input[type=text]:focus,textarea:focus{border-color:var(--gold);outline:none}
+::placeholder{color:var(--muted);opacity:.55}
+input[type=text]:focus-visible,button:focus-visible,.seg input:focus-visible+span,.chk input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.seg{display:flex;border:1px solid var(--gold-muted);overflow:hidden}
+.seg label{flex:1;position:relative}
+.seg input{position:absolute;opacity:0;inset:0}
+.seg span{display:block;text-align:center;padding:8px 4px;font-size:12.5px;font-weight:400;letter-spacing:.06em;cursor:pointer;border-left:1px solid var(--gold-muted);color:var(--muted);transition:background .15s,color .15s}
+.seg span:hover{color:var(--fg)}
+.seg label:first-child span{border-left:0}
+.seg input:checked+span{background:var(--accent);color:var(--accent-fg);font-weight:600}
+.chk{display:flex;align-items:center;gap:9px;font-size:13.5px;cursor:pointer;color:var(--fg)}
+.chk input{appearance:none;-webkit-appearance:none;width:15px;height:15px;margin:0;border:1px solid var(--gold-dim);background:var(--card);display:grid;place-content:center;flex:none;cursor:pointer}
+.chk input::after{content:"";width:7px;height:7px;background:var(--gold);transform:scale(0);transition:transform .12s}
+.chk input:checked{border-color:var(--gold)}
+.chk input:checked::after{transform:scale(1)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.linkbtn{background:none;border:0;border-bottom:1px solid var(--gold-muted);padding:0 0 1px;color:var(--muted);font:inherit;font-size:11px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;cursor:pointer}
+.linkbtn:hover{color:var(--gold);border-color:var(--gold)}
+button.btn{font-family:var(--a-display);font-weight:600;font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;border-radius:0;padding:12px 18px;cursor:pointer;border:1px solid var(--gold);background:var(--gold);color:var(--accent-fg);transition:background .15s}
+button.btn:hover{background:var(--gold-light)}
+button.btn.ghost{background:transparent;color:var(--gold)}
+button.btn.ghost:hover{background:rgba(200,168,75,.08)}
+.seedrow{display:flex;gap:8px;align-items:flex-end}
+.seedrow label.f{flex:1}
+.seedrow input{font-variant-numeric:tabular-nums;letter-spacing:.06em}
+.note{font-size:12px;line-height:1.6;color:var(--muted);border-left:1px solid var(--gold-muted);padding:2px 0 2px 12px;margin:0}
+
+main{display:flex;flex-direction:column;gap:14px;min-width:0}
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.bar h2{font-family:var(--a-head);font-weight:400;font-size:26px;margin:0;color:var(--fg)}
+.bar h2 em{color:var(--gold)}
+.stats{display:flex;gap:16px;color:var(--muted);font-size:13px;font-variant-numeric:tabular-nums;flex-wrap:wrap;align-items:baseline}
+.stats b{font-family:var(--a-head);font-size:22px;font-weight:500;color:var(--gold);margin-right:2px}
+.pill{font-size:9.5px;font-weight:500;letter-spacing:.14em;text-transform:uppercase;padding:3px 9px;border:1px solid currentColor;align-self:center}
+.pill.ok{color:var(--ok)}.pill.warn{color:var(--warn)}
+.flag{font-size:13px;color:var(--warn);margin:0}
+#book{display:flex;flex-direction:column;align-items:center;gap:22px}
+.sheet{position:relative;overflow:hidden;outline:1px solid var(--gold-muted);outline-offset:4px;box-shadow:0 10px 30px rgba(0,0,0,.6);background:var(--paper)}
+.cap{font-family:var(--a-display);font-size:9px;font-weight:600;color:var(--gold-dim);letter-spacing:.24em;text-transform:uppercase;margin-top:-10px;text-align:center}
+
+/* ---------- printed page ---------- */
+.page{background:var(--paper);color:var(--ink);font-family:var(--f-body);position:relative;transform-origin:top left;overflow:hidden}
+.pin{position:absolute;display:flex;flex-direction:column}
+.folio{position:absolute;bottom:.32in;font-family:var(--f-body);font-size:10pt;color:var(--ink-soft)}
+.ph{display:flex;flex-direction:column;gap:2px;margin-bottom:.18in;text-align:center}
+.eyebrow{font-family:var(--f-ui);font-size:7.5pt;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft)}
+.ptitle{font-family:var(--f-display);font-size:20pt;line-height:1.1;margin:0;text-wrap:balance}
+.instr{font-style:italic;font-size:11pt;color:var(--ink-soft);margin:.04in 0 0}
+.lot{display:flex;justify-content:center;margin-top:.07in;color:var(--ink)}
+.frzwrap{position:absolute;color:var(--ink);line-height:0;opacity:.85}
+.frzwrap.flip,.cv-frz.flip{transform:scaleY(-1)}
+.frz{display:block;overflow:visible}
+.tp .lotus{color:var(--ink)}
+.cv-frz{position:absolute;line-height:0}
+.thgroup{display:flex;flex-direction:column;gap:6px}
+.thgroup+.thgroup{margin-top:10px}
+.thlab{font-size:10px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--faience)}
+.rule{height:1px;background:var(--ink);opacity:.8;margin:.1in auto 0;width:1.2in}
+.lp .instr{font-size:13pt}.lp .ptitle{font-size:24pt}
+
+.ws{display:grid;width:max-content;margin:0 auto;border:1.5px solid var(--ink);font-family:var(--f-ui);font-weight:600}
+.ws span{display:flex;align-items:center;justify-content:center}
+.ws span.on{background:var(--hl);border-radius:40%}
+.ws span.off{color:var(--ink-faint)}
+.wl{display:grid;gap:.04in .2in;margin:.2in auto 0;font-family:var(--f-ui);font-size:10pt;letter-spacing:.06em}
+.lp .wl{font-size:13pt}
+.wl span::before{content:"";display:inline-block;width:.11in;height:.11in;border:1px solid var(--ink);margin-right:.08in;vertical-align:-1px}
+
+.scr{display:flex;flex-direction:column;gap:.17in;margin-top:.1in}
+.scr .it{display:grid;align-items:end;gap:.15in;font-size:12pt}
+.scr .n{font-family:var(--f-ui);font-size:9pt;color:var(--ink-soft);text-align:right}
+.scr .jw{font-family:var(--f-ui);font-weight:600;letter-spacing:.3em;white-space:nowrap}
+.scr .ln{border-bottom:1px solid var(--ink);height:.3in;position:relative}
+.scr .ln i{position:absolute;left:0;bottom:2px;font-size:9pt;color:var(--ink-soft)}
+
+.cg{display:flex;flex-wrap:wrap;gap:.14in .2in;align-content:flex-start;justify-content:center;margin-top:.1in}
+.cg .w{display:flex;gap:2px}
+.cg .cl{display:flex;flex-direction:column;align-items:center;font-family:var(--f-ui)}
+.cg .cb{border-bottom:1.2px solid var(--ink);width:100%;text-align:center;font-weight:700}
+.cg .cc{color:var(--ink-soft);font-weight:500}
+.cg .pu{font-family:var(--f-ui);align-self:flex-end;font-weight:700}
+.ref{text-align:center;font-style:italic;margin-top:.22in;font-size:12pt}
+.keyrow{display:flex;justify-content:center;flex-wrap:wrap;gap:.06in .16in;font-family:var(--f-ui);font-size:9.5pt;margin-top:.16in;color:var(--ink-soft)}
+
+.fi{font-size:13.5pt;line-height:2.3;text-align:center;margin:.1in .1in 0}
+.lp .fi{font-size:16pt}
+.fi .bl{display:inline-block;border-bottom:1px solid var(--ink);vertical-align:baseline;height:1.1em;max-width:100%}
+.bank{margin-top:.3in;border:1px solid var(--ink);padding:.12in .16in;display:flex;flex-direction:column;gap:.08in}
+.bank b{font-family:var(--f-ui);font-size:7.5pt;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.bank div{display:flex;flex-wrap:wrap;gap:.06in .24in;font-family:var(--f-ui);font-size:11pt;letter-spacing:.04em}
+
+.tp{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:.16in}
+.orn{display:flex;align-items:center;gap:.12in;color:var(--ink)}
+.orn::before,.orn::after{content:"";height:1px;width:.9in;background:currentColor}
+.orn i{width:.1in;height:.1in;border:1px solid currentColor;transform:rotate(45deg)}
+.tp h1{font-family:var(--f-display);font-weight:400;font-size:34pt;line-height:1.08;margin:0;text-wrap:balance;letter-spacing:.02em}
+.tp .sub{font-style:italic;font-size:15pt;color:var(--ink-soft);margin:0;text-wrap:balance}
+.tp .by{font-family:var(--f-ui);font-size:10pt;letter-spacing:.2em;text-transform:uppercase;margin-top:.3in}
+.tp .meta{font-family:var(--f-ui);font-size:8pt;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);position:absolute;bottom:.1in;left:0;right:0}
+
+.cp{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:.1in;font-size:9.5pt;line-height:1.5;color:var(--ink)}
+.cp p{margin:0}
+.cp .t{font-family:var(--f-display);font-size:12pt}
+.cp .s{color:var(--ink-soft)}
+
+.toc{display:flex;flex-direction:column;gap:.07in;font-size:12pt}
+.toc div{display:flex;align-items:baseline;gap:.08in}
+.toc .d{flex:1;border-bottom:1px dotted var(--ink-soft);transform:translateY(-3px)}
+.toc .t{font-family:var(--f-ui);font-size:8pt;color:var(--ink-soft);letter-spacing:.06em;text-transform:uppercase}
+.toc .num{font-variant-numeric:tabular-nums}
+
+.xw{position:relative;margin:0 auto}
+.xw .c{position:absolute;border:1px solid var(--ink);background:var(--paper);font-family:var(--f-ui);font-weight:600;display:flex;align-items:center;justify-content:center}
+.xw .c b{position:absolute;top:1px;left:2px;font-weight:500;line-height:1;color:var(--ink)}
+.xw.sol .c{color:var(--ink)}
+.xclues{display:grid;grid-template-columns:1fr 1fr;gap:.22in;margin-top:.2in;font-size:10pt;line-height:1.3}
+.lp .xclues{font-size:12.5pt}
+.xclues h5{margin:0 0 .05in;font-family:var(--f-ui);font-size:7.5pt;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);font-weight:600}
+.xclues ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:.045in}
+.xclues li{display:grid;grid-template-columns:1.6em 1fr;gap:.04in}
+.xclues li>b{font-family:var(--f-ui);font-size:.85em;padding-top:.08em;text-align:right}
+.xclues li i{color:var(--ink-soft);font-size:.86em;white-space:nowrap}
+.cbl{display:inline-block;width:.42in;border-bottom:1px solid var(--ink);height:.85em;vertical-align:baseline}
+.xbank{margin-top:.16in;display:flex;flex-wrap:wrap;gap:.03in .18in;justify-content:center;font-family:var(--f-ui);font-size:9pt;letter-spacing:.06em;color:var(--ink-soft)}
+.lp .xbank{font-size:11pt}
+
+.notes{flex:1;background:repeating-linear-gradient(to bottom,transparent 0,transparent calc(.34in - 1px),var(--ink-faint) calc(.34in - 1px),var(--ink-faint) .34in)}
+
+.ansgrid{display:grid;column-gap:.3in;align-items:start}
+.ans{display:flex;flex-direction:column;gap:.2in;min-width:0}
+.ans .ai{display:flex;flex-direction:column;gap:.06in;break-inside:avoid}
+.ans h4{margin:0;font-family:var(--f-ui);font-size:8.5pt;letter-spacing:.12em;text-transform:uppercase}
+.ans p{margin:0;font-size:11.5pt;line-height:1.45}
+.ans ol{margin:0;padding-left:.28in;columns:2;column-gap:.2in;font-family:var(--f-ui);font-size:10pt;letter-spacing:.04em}
+
+/* ---------- cover ---------- */
+.viewseg{display:flex;border:1px solid var(--gold-muted);overflow:hidden;align-self:flex-start}
+.viewseg button{font-family:var(--a-display);font-size:10px;font-weight:600;letter-spacing:.24em;text-transform:uppercase;padding:9px 18px;border:0;background:transparent;color:var(--muted);cursor:pointer}
+.viewseg button+button{border-left:1px solid var(--gold-muted)}
+.viewseg button[aria-pressed="true"]{background:var(--accent);color:var(--accent-fg)}
+#coverView{display:flex;flex-direction:column;gap:12px;min-width:0}
+.cdims{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.cdims b{color:var(--gold);font-weight:500}
+.cwrap{overflow:hidden;outline:1px solid var(--gold-muted);outline-offset:4px;box-shadow:0 10px 30px rgba(0,0,0,.6);align-self:center}
+.cover{position:relative;transform-origin:top left;overflow:hidden;font-family:var(--f-body)}
+.cv-panel{position:absolute;top:0;bottom:0}
+.cv-front{display:flex;flex-direction:column;align-items:center;text-align:center}
+.cv-frame{position:absolute;border:1.5px solid var(--cv-accent)}
+.cv-frame::after{content:"";position:absolute;inset:.07in;border:.5px solid var(--cv-accent);opacity:.7}
+.cv-eyebrow{font-family:var(--f-ui);font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--cv-accent)}
+.cv-title{font-family:var(--f-display);font-weight:400;line-height:1.04;margin:0;text-wrap:balance;letter-spacing:.015em}
+.cv-sub{font-style:italic;margin:0;text-wrap:balance;opacity:.92}
+.cv-author{font-family:var(--f-ui);font-weight:600;letter-spacing:.22em;text-transform:uppercase}
+.cv-grid{display:grid;font-family:var(--f-ui);font-weight:600;color:var(--cv-ink)}
+.cv-grid span{display:flex;align-items:center;justify-content:center;opacity:.32}
+.cv-grid span.h{opacity:1;color:var(--cv-bg);background:var(--cv-accent);border-radius:999px}
+.cv-grid span.h.l{border-radius:999px 0 0 999px}.cv-grid span.h.m{border-radius:0}.cv-grid span.h.r{border-radius:0 999px 999px 0}
+.cv-orn{display:flex;align-items:center;gap:.12in;color:var(--cv-accent)}
+.cv-orn::before,.cv-orn::after{content:"";height:1px;width:.8in;background:currentColor}
+.cv-orn i{width:.09in;height:.09in;border:1px solid currentColor;transform:rotate(45deg)}
+.cv-back{display:flex;flex-direction:column}
+.cv-quote{font-style:italic;line-height:1.35;margin:0}
+.cv-quote cite{display:block;font-style:normal;font-family:var(--f-ui);letter-spacing:.14em;text-transform:uppercase;color:var(--cv-accent);margin-top:.08in}
+.cv-blurb{margin:0;line-height:1.45}
+.cv-list{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:.05in;font-family:var(--f-ui)}
+.cv-list li::before{content:"";display:inline-block;width:.07in;height:.07in;transform:rotate(45deg);border:1px solid var(--cv-accent);margin-right:.12in;vertical-align:1px}
+.cv-spine{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;white-space:nowrap;overflow:hidden;font-family:var(--f-display);gap:.25in}
+.cv-spine .a{font-family:var(--f-ui);font-weight:600;letter-spacing:.14em;text-transform:uppercase;font-size:.62em;color:var(--cv-accent)}
+.guide{position:absolute;pointer-events:none}
+.g-bleed{border:0 solid rgba(220,40,60,.28)}
+.g-trim{border:1px dashed #E0284A}
+.g-safe{border:1px dotted #1C8BD6}
+.g-fold{border-left:1px dashed #E0284A;top:0;bottom:0;width:0}
+.g-bar{border:1px dashed #1C8BD6;background:rgba(255,255,255,.85);display:flex;align-items:center;justify-content:center;font-family:var(--f-ui);font-size:7pt;color:#1C5A8C;text-align:center;line-height:1.3}
+.g-lab{position:absolute;font-family:var(--f-ui);font-size:6.5pt;color:#E0284A;background:rgba(255,255,255,.85);padding:1px 3px;white-space:nowrap}
+textarea{font:inherit;font-size:14px;font-weight:300;letter-spacing:normal;text-transform:none;color:var(--fg);background:var(--card);border:1px solid var(--line);border-bottom-color:var(--gold-muted);border-radius:0;padding:8px 10px;resize:vertical;min-height:84px;line-height:1.45}
+textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.swatches{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.swatches label{position:relative;cursor:pointer}
+.swatches input{position:absolute;opacity:0;inset:0}
+.swatches span{display:flex;flex-direction:column;align-items:center;gap:5px;font-size:10px;letter-spacing:.08em;color:var(--muted)}
+.swatches i{display:block;width:100%;height:30px;border:2px solid transparent;outline:1px solid var(--line)}
+.swatches input:checked+span i{border-color:var(--accent);outline-color:var(--accent)}
+.swatches input:focus-visible+span i{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:860px){textarea{font-size:16px}.viewseg button{padding:10px 18px;font-size:14px}}
+
+body.print-cover #book,body.print-cover .cap{display:none!important}
+@media print{
+  body:not(.print-cover) #coverView{display:none!important}
+  body.print-cover #coverView{display:block!important}
+  body.print-cover .cdims,body.print-cover .guide{display:none!important}
+  body.print-cover .cwrap{width:auto!important;height:auto!important;box-shadow:none}
+  body.print-cover .cover{transform:none!important;width:100vw!important;height:100vh!important}
+  body.print-cover .app,body.print-cover main{padding:0!important;margin:0!important;gap:0!important}
+  .viewseg{display:none!important}
+}
+@media print{
+  aside,.bar,.cap,.flag{display:none!important}
+  body{background:#fff}
+  .app{display:block;padding:0;max-width:none}
+  #book{display:block}
+  .sheet{width:auto!important;height:auto!important;box-shadow:none;overflow:visible;break-after:page}
+  .page{transform:none!important}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* ---------- phone layout: tabbed views + bottom bar ---------- */
+.tabbar{display:none}
+@media (max-width:860px){
+  .app{padding-block:12px calc(84px + env(safe-area-inset-bottom,0px));gap:12px}
+  .app[data-view="proofs"] aside{display:none}
+  .app[data-view="settings"] main{display:none}
+  aside{padding:16px;gap:20px}
+  .top{padding-block:14px 0;gap:12px}.top .mark{width:42px;height:42px}.wm b{font-size:16px}.wm span{font-size:9px;letter-spacing:.22em}.top .tag{display:none}
+  .rulegold{margin-top:12px}
+  input[type=text]{font-size:16px;padding:11px 12px}
+  .seg span{padding:11px 4px;font-size:14px}
+  .chk{min-height:40px;font-size:15px}
+  .chk input{width:20px;height:20px}
+  .grid2{gap:0 12px}
+  .linkbtn{font-size:14px;padding:8px 0}
+  .row{gap:16px}
+  button.btn{padding:12px 16px;font-size:15px}
+  #book{gap:18px}
+  .cap{margin-top:-10px}
+  .bar h2{font-size:18px}
+  .tabbar{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;position:fixed;left:0;right:0;bottom:0;z-index:20;
+    background:var(--panel);border-top:1px solid var(--line);
+    padding-top:8px;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px));
+    padding-left:max(12px,env(safe-area-inset-left,0px));padding-right:max(12px,env(safe-area-inset-right,0px))}
+  .tabbar button{font-family:var(--a-display);font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;min-height:50px;border-radius:0;cursor:pointer;
+    border:1px solid var(--gold-muted);background:transparent;color:var(--fg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.15}
+  .tabbar button small{font-family:var(--a-ui);font-weight:400;font-size:11px;letter-spacing:.02em;text-transform:none;color:var(--muted);font-variant-numeric:tabular-nums}
+  .tabbar button[aria-selected="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+  .tabbar button[aria-selected="true"] small{color:var(--accent-fg);opacity:.85}
+  .tabbar #shuffle2{padding:0 14px;color:var(--gold);border-color:var(--gold)}
+  .tabbar button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+}
+@media print{.tabbar{display:none!important}}
+</style>
+<style id="pagesize"></style>
+
+<header class="top">
+  <svg class="mark" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Scripture Puzzle Press mark">
+<path d="M21 8 L43 8 Q49 18 52 30 L48 31 L48 50 L41 50 L41 36 L23 36 L23 50 L16 50 L16 31 L12 30 Q15 18 21 8 Z" fill="none" stroke="var(--gold)" stroke-width="1.6" stroke-linejoin="miter"/>
+<g stroke="var(--gold)" stroke-width=".9" opacity=".55"><line x1="19.4" y1="13" x2="22" y2="13"/><line x1="42" y1="13" x2="44.6" y2="13"/><line x1="17.8" y1="17" x2="22" y2="17"/><line x1="42" y1="17" x2="46.2" y2="17"/><line x1="16.3" y1="21" x2="22" y2="21"/><line x1="42" y1="21" x2="47.7" y2="21"/><line x1="14.9" y1="25" x2="22" y2="25"/><line x1="42" y1="25" x2="49.1" y2="25"/><line x1="13.5" y1="29" x2="22" y2="29"/><line x1="42" y1="29" x2="50.5" y2="29"/><line x1="12.2" y1="33" x2="22" y2="33"/><line x1="42" y1="33" x2="51.8" y2="33"/><line x1="17" y1="39" x2="22" y2="39"/><line x1="42" y1="39" x2="47" y2="39"/><line x1="17" y1="42" x2="22" y2="42"/><line x1="42" y1="42" x2="47" y2="42"/><line x1="17" y1="45" x2="22" y2="45"/><line x1="42" y1="45" x2="47" y2="45"/><line x1="17" y1="48" x2="22" y2="48"/><line x1="42" y1="48" x2="47" y2="48"/></g>
+<path d="M32 9.6 L34.2 12.2 L32 14.8 L29.8 12.2 Z" fill="var(--gold)"/>
+<rect x="23" y="17" width="18" height="18" fill="var(--bg)" stroke="var(--gold)" stroke-width="1.2"/>
+<g stroke="var(--gold)" stroke-width=".6" opacity=".7"><line x1="29" y1="17" x2="29" y2="35"/><line x1="35" y1="17" x2="35" y2="35"/><line x1="23" y1="23" x2="41" y2="23"/><line x1="23" y1="29" x2="41" y2="29"/></g>
+<g fill="var(--gold)"><rect x="24.3" y="18.3" width="3.4" height="3.4"/><rect x="30.3" y="24.3" width="3.4" height="3.4"/><rect x="36.3" y="30.3" width="3.4" height="3.4"/></g>
+<path d="M29.5 36 L34.5 36 L33.6 45 L30.4 45 Z" fill="var(--gold)"/>
+<line x1="9" y1="54" x2="55" y2="54" stroke="var(--gold)" stroke-width="1.6"/>
+<line x1="13" y1="57.5" x2="51" y2="57.5" stroke="var(--gold)" stroke-width=".8" opacity=".6"/>
+</svg>
+  <div class="wm"><b>Scripture Puzzle Press</b><span>A SPHINX Global Enterprises product</span></div>
+  <div class="tag">Bible puzzle books that celebrate <em>Africa in Scripture</em></div>
+</header>
+<div class="rulegold" id="topfrieze"></div>
+<div class="app" id="app" data-view="proofs">
+  <aside aria-label="Book settings">
+    <div class="brand">
+      <h1>Build your <em>book</em></h1>
+      <p>Word searches, crosswords, scrambles, cryptograms and verse fill-ins, with contents, copyright page, answer key and a matching KDP cover. Every verse is King James Version (public domain).</p>
+    </div>
+
+    <fieldset>
+      <legend>Cover</legend>
+      <label class="f">Book title<input type="text" id="title" value="Hidden in the Word"></label>
+      <label class="f">Subtitle<input type="text" id="subtitle" value="Word Searches, Crosswords, Cryptograms &amp; Verse Puzzles"></label>
+      <label class="f">Author<input type="text" id="author" placeholder="Your name"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Trim &amp; print</legend>
+      <div class="seg" role="radiogroup" aria-label="Trim size">
+        <label><input type="radio" name="trim" id="trim-letter" value="letter" checked><span>8.5 × 11 in</span></label>
+        <label><input type="radio" name="trim" id="trim-6x9" value="6x9"><span>6 × 9 in</span></label>
+      </div>
+      <label class="chk"><input type="checkbox" id="large">Large print</label>
+      <label class="f">Page ornaments</label>
+      <div class="seg" role="radiogroup" aria-label="Page ornaments">
+        <label><input type="radio" name="orn" id="orn-kem" value="kemetic" checked><span>Kemetic</span></label>
+        <label><input type="radio" name="orn" id="orn-cls" value="classic"><span>Classic</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Difficulty</legend>
+      <div class="seg" role="radiogroup" aria-label="Difficulty">
+        <label><input type="radio" name="diff" id="d-easy" value="easy"><span>Easy</span></label>
+        <label><input type="radio" name="diff" id="d-med" value="medium" checked><span>Medium</span></label>
+        <label><input type="radio" name="diff" id="d-hard" value="hard"><span>Hard</span></label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Puzzle types</legend>
+      <label class="chk"><input type="checkbox" class="ptype" id="t-search" value="search" checked>Word search</label>
+      <label class="chk"><input type="checkbox" class="ptype" id="t-cross" value="crossword" checked>Crossword</label>
+      <label class="chk"><input type="checkbox" class="ptype" id="t-scramble" value="scramble" checked>Word scramble</label>
+      <label class="chk"><input type="checkbox" class="ptype" id="t-crypto" value="crypto" checked>Verse cryptogram</label>
+      <label class="chk"><input type="checkbox" class="ptype" id="t-fill" value="fill" checked>Verse fill-in</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Themes</legend>
+      <div class="row"><button class="linkbtn" type="button" id="all">Select all</button><button class="linkbtn" type="button" id="afr">Africa only</button><button class="linkbtn" type="button" id="none">Clear</button></div>
+      <div id="themes"></div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Length</legend>
+      <label class="f">Sets per theme</label>
+      <div class="seg" role="radiogroup" aria-label="Sets per theme">
+        <label><input type="radio" name="sets" id="s1" value="1" checked><span>1</span></label>
+        <label><input type="radio" name="sets" id="s2" value="2"><span>2</span></label>
+        <label><input type="radio" name="sets" id="s3" value="3"><span>3</span></label>
+      </div>
+      <label class="chk"><input type="checkbox" id="toc" checked>Contents page</label>
+      <label class="chk"><input type="checkbox" id="key" checked>Answer key</label>
+    </fieldset>
+
+    <fieldset>
+      <legend>Cover</legend>
+      <label class="f">Interior paper</label>
+      <div class="seg" role="radiogroup" aria-label="Interior paper">
+        <label><input type="radio" name="paper" id="p-white" value="white" checked><span>White</span></label>
+        <label><input type="radio" name="paper" id="p-cream" value="cream"><span>Cream</span></label>
+      </div>
+      <label class="f">Colour scheme</label>
+      <div class="swatches" role="radiogroup" aria-label="Cover colour scheme" id="swatches"></div>
+      <label class="f">Back cover description<textarea id="blurb" placeholder="Leave blank to use a description written from your settings."></textarea></label>
+      <label class="chk"><input type="checkbox" id="guides" checked>Show trim, bleed and safe-zone guides</label>
+      <button class="btn" type="button" id="printCover" hidden>Print cover / Save as PDF</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Edition</legend>
+      <div class="seedrow">
+        <label class="f">Edition number<input type="text" id="seed" inputmode="numeric" autocomplete="off" maxlength="9"></label>
+        <button class="btn ghost" type="button" id="reshuffle">Reshuffle</button>
+      </div>
+      <p class="note">The same edition number and settings always produce the same puzzles. Note it down to reprint a book later. Your settings are remembered on this device.</p>
+      <button class="btn" type="button" id="print" hidden>Print / Save as PDF</button>
+      <p class="note" id="printnote">To export, open the downloadable copy of this generator in Chrome or Edge, build your book, then use Print → Save as PDF with margins set to None. Each preview page becomes one PDF page at the chosen trim size.</p>
+    </fieldset>
+  </aside>
+
+  <main>
+    <div class="bar">
+      <h2>Page <em>proofs</em></h2>
+      <div class="stats"><span><b id="np">0</b> pages</span><span><b id="nz">0</b> puzzles</span><span class="pill ok" id="kdp">KDP ready</span></div>
+    </div>
+    <div class="viewseg" role="group" aria-label="Show">
+      <button type="button" id="v-int" aria-pressed="true">Interior</button>
+      <button type="button" id="v-cov" aria-pressed="false">Cover</button>
+    </div>
+    <p class="flag" id="flag" hidden></p>
+    <div id="book"></div>
+    <div id="coverView" hidden>
+      <div class="cdims" id="cdims"></div>
+      <div class="cwrap" id="cwrap"><div class="cover" id="cover"></div></div>
+      <p class="note" id="covernote"></p>
+    </div>
+  </main>
+</div>
+<nav class="tabbar" role="tablist" aria-label="View">
+  <button type="button" role="tab" id="tab-settings" aria-selected="false">Settings<small id="tsum">Medium · 20 themes</small></button>
+  <button type="button" role="tab" id="tab-proofs" aria-selected="true">Proofs<small><span id="tnp">0</span> pages</small></button>
+  <button type="button" id="shuffle2" aria-label="Reshuffle puzzles">Reshuffle</button>
+</nav>
+
+<script>
+const THEMES=__THEMES__;
+const TYPE_INFO={
+  search:{label:"Word Search",instr:"Find each word hidden in the grid. Words may run",short:"Word Search"},
+  crossword:{label:"Crossword",instr:"Each clue is a King James verse with the answer left blank.",short:"Crossword"},
+  scramble:{label:"Word Scramble",instr:"Unscramble each word from this theme.",short:"Scramble"},
+  crypto:{label:"Verse Cryptogram",instr:"Each letter stands for another. Use the given letters to decode the verse.",short:"Cryptogram"},
+  fill:{label:"Verse Fill-In",instr:"Complete the verse using the words in the box.",short:"Fill-In"}
+};
+const DIFF={
+  easy:{n:11,count:10,dirs:[[0,1],[1,0]],dirTxt:"across or down.",reveal:4,blanks:3,scr:8,xw:0},
+  medium:{n:14,count:14,dirs:[[0,1],[1,0],[1,1],[-1,1]],dirTxt:"across, down or diagonally.",reveal:2,blanks:5,scr:10,xw:1},
+  hard:{n:17,count:18,dirs:[[0,1],[1,0],[1,1],[-1,1],[0,-1],[-1,0],[-1,-1],[1,-1]],dirTxt:"in any direction, including backward.",reveal:1,blanks:7,scr:12,xw:2}
+};
+const TRIM={letter:{w:8.5,h:11,top:.65,bot:.75,inn:.85,out:.6,tocPer:24,scrLine:1.9},"6x9":{w:6,h:9,top:.55,bot:.7,inn:.75,out:.5,tocPer:17,scrLine:1.45}};
+// Crossword size by trim / print size: [words for easy, medium, hard], max grid side.
+const XW={letter:{words:[9,12,14],max:15},"6x9":{words:[7,9,10],max:13},letterLP:{words:[7,9,10],max:13},"6x9LP":{words:[5,6,7],max:11}};
+// KDP paperback cover spec (kdp.amazon.com/help/topic/G201953020)
+const KDP_COVER={bleed:.125,perPage:{white:.002252,cream:.0025},spineTextMin:80,spineMargin:.0625,safe:.125,barcode:{w:2,h:1.2,inset:.25}};
+const PALETTES=[
+  {id:"sphinx",name:"Sphinx",bg:"#0A0A0A",ink:"#F5F0E8",accent:"#C8A84B",acc2:"#3B6FC4"},
+  {id:"lapis",name:"Lapis",bg:"#13264A",ink:"#F3EAD3",accent:"#D4AF5A",acc2:"#3FA7A0",alias:"midnight"},
+  {id:"faience",name:"Faience",bg:"#0E4A47",ink:"#F3EBD9",accent:"#D9B45E",acc2:"#C9603A",alias:"olive"},
+  {id:"carnelian",name:"Carnelian",bg:"#5B1E12",ink:"#F6EADB",accent:"#D8B063",acc2:"#4F86C9",alias:"wine"},
+  {id:"papyrus",name:"Papyrus",bg:"#E8DABA",ink:"#2A1D0E",accent:"#8C2F1B",acc2:"#1F4E8C",alias:"vellum"}
+];
+const findPal=id=>PALETTES.find(p=>p.id===id||p.alias===id)||PALETTES[0];
+const AFRICA_IDS=["cush","egypt","sheba","hagar","church"];
+// Kemetic ornaments: the kheker frieze (bundled reeds crowning tomb walls) and the lotus.
+const KHEKER=c=>`<g stroke="${c}" fill="none"><path d="M2.5 30 V13 Q2.5 6 7 1.5 Q11.5 6 11.5 13 V30" stroke-width="1.15"/><path d="M2.5 16 H11.5 M2.5 19.5 H11.5" stroke-width="1"/><circle cx="7" cy="9.2" r="1.7" fill="${c}" stroke="none"/></g>`;
+function frieze(id,hIn,colors,base=true){
+  const k=hIn*PX/32, w=14*colors.length;
+  return `<svg class="frz" width="100%" height="${hIn}in" aria-hidden="true"><defs><pattern id="${id}" patternUnits="userSpaceOnUse" width="${w}" height="32" patternTransform="scale(${k.toFixed(4)})">${colors.map((c,i)=>`<g transform="translate(${i*14} 0)">${KHEKER(c)}</g>`).join("")}</pattern></defs><rect width="100%" height="${(30*k).toFixed(2)}" fill="url(#${id})"/>${base?`<line x1="0" x2="100%" y1="${(31.2*k).toFixed(2)}" y2="${(31.2*k).toFixed(2)}" stroke="${colors[0]}" stroke-width="${Math.max(.6,1.1*k).toFixed(2)}"/>`:""}</svg>`;
+}
+function lotus(wIn,c="currentColor",lines=true){
+  return `<svg class="lotus" viewBox="0 0 120 24" style="width:${wIn}in;height:${(wIn*.2).toFixed(3)}in" fill="none" stroke="${c}" stroke-width="1.15" stroke-linejoin="round" aria-hidden="true">${lines?'<path d="M4 19 H40 M80 19 H116" stroke-width=".9"/>':""}<path d="M60 2 Q66 10 60 19 Q54 10 60 2Z" fill="${c}"/><path d="M60 19 Q51 9 45 8 Q48 16 60 19Z M60 19 Q69 9 75 8 Q72 16 60 19Z"/><path d="M60 19 Q46 15 40 12 Q46 20 60 19Z M60 19 Q74 15 80 12 Q74 20 60 19Z"/><path d="M54 21.6 H66" stroke-width="1.4"/></svg>`;
+}
+let ORN="kemetic";
+const KDP_MIN=24, PX=96;
+// Letter runs that must never appear by accident in a grid, a jumble or a cipher.
+const BLOCK=["FUCK","SHIT","CUNT","COCK","DICK","PISS","TITS","TITTY","CRAP","DAMN","BITCH","SLUT","WHORE","FAG","NIGGER","NIGGA","PORN","SEX","NAZI","RAPE","PENIS","VAGINA","BOOB","BUTT","TWAT","WANK","JIZZ","SPIC","KIKE","CHINK","DYKE","HOMO","PUSSY","ARSE","ASS","CUM","KKK","HOE","POOP","TURD","FART","SUCK","PEE","PUBE","ANAL","ANUS","DILDO","HORNY","NUDE","BONER","SEMEN","HELL","KILL"];
+const BLOCK_JUMBLE=BLOCK;
+const hasBlocked=(s,list)=>list.some(b=>s.includes(b));
+
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function hashStr(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}return h>>>0}
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const pick=(a,R)=>a[Math.floor(R()*a.length)];
+function shuffle(a,R){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(R()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+/* ---------- word search ---------- */
+function gridLines(n){
+  const L=[];
+  for(let r=0;r<n;r++){L.push([...Array(n)].map((_,c)=>r*n+c))}
+  for(let c=0;c<n;c++){L.push([...Array(n)].map((_,r)=>r*n+c))}
+  for(let s=-(n-1);s<n;s++){const a=[],b=[];for(let r=0;r<n;r++){const c=r+s;if(c>=0&&c<n)a.push(r*n+c);const c2=n-1-r+s;if(c2>=0&&c2<n)b.push(r*n+c2)}if(a.length>2)L.push(a);if(b.length>2)L.push(b)}
+  return L;
+}
+function cleanGrid(grid,fixed,n,letters,R){
+  // Re-roll filler letters until no blocked run touches a filler cell. Placed words are left alone.
+  const lines=gridLines(n);
+  for(let pass=0;pass<300;pass++){
+    let dirty=null;
+    for(const line of lines){
+      const s=line.map(k=>grid[k]).join(""), rs=[...s].reverse().join("");
+      for(const b of BLOCK){
+        for(const [str,rev] of [[s,false],[rs,true]]){
+          let i=str.indexOf(b);
+          while(i>=0){
+            const span=[];for(let j=0;j<b.length;j++){const pos=rev?line.length-1-(i+j):i+j;span.push(line[pos])}
+            const free=span.filter(k=>!fixed.has(k));
+            if(free.length){dirty=free;break}
+            i=str.indexOf(b,i+1);
+          }
+          if(dirty)break;
+        }
+        if(dirty)break;
+      }
+      if(dirty)break;
+    }
+    if(!dirty)return pass;
+    dirty.forEach(k=>grid[k]=letters[Math.floor(R()*letters.length)]);
+  }
+  return -1;
+}
+function makeSearch(words,d,R,n){
+  words=words.slice().sort((a,b)=>b.length-a.length);
+  const g=Array(n*n).fill(null), placed=[];
+  for(const w of words){
+    for(let t=0;t<500;t++){
+      const [dr,dc]=pick(d.dirs,R), r=Math.floor(R()*n), c=Math.floor(R()*n);
+      const er=r+dr*(w.length-1), ec=c+dc*(w.length-1);
+      if(er<0||er>=n||ec<0||ec>=n) continue;
+      let ok=true;
+      for(let i=0;i<w.length;i++){const v=g[(r+dr*i)*n+c+dc*i];if(v&&v!==w[i]){ok=false;break}}
+      if(!ok) continue;
+      const cells=[];
+      for(let i=0;i<w.length;i++){const k=(r+dr*i)*n+c+dc*i;g[k]=w[i];cells.push(k)}
+      placed.push({w,cells});break;
+    }
+  }
+  const letters=placed.map(p=>p.w).join("")+"ABCDEFGHIJKLMNOPRSTUVWY";
+  const fixed=new Set(placed.flatMap(p=>p.cells));
+  const grid=g.map(v=>v||letters[Math.floor(R()*letters.length)]);
+  const rerolls=cleanGrid(grid,fixed,n,letters,R);
+  return {type:"search",n,grid,placed:placed.map(p=>p.w).sort(),cells:fixed,dropped:words.length-placed.length,clean:rerolls>=0};
+}
+
+/* ---------- crossword ---------- */
+function xwPlace(words,R,maxN,limit){
+  // Greedy freeform crossword: each new word must cross an existing one; no touching side by side.
+  const cells=new Map(), dirsAt=new Map(), placed=[];
+  const key=(r,c)=>r+","+c, get=(r,c)=>cells.get(key(r,c));
+  let minR=0,maxR=0,minC=0,maxC=0;
+  const fits=(w,r,c,dir)=>{
+    const dr=dir==="D"?1:0, dc=dir==="A"?1:0, L=w.length;
+    if(get(r-dr,c-dc)||get(r+dr*L,c+dc*L)) return -1;
+    let inter=0;
+    for(let k=0;k<L;k++){
+      const rr=r+dr*k, cc=c+dc*k, ch=get(rr,cc);
+      if(ch){ if(ch!==w[k]||(dirsAt.get(key(rr,cc))||"").includes(dir)) return -1; inter++; }
+      else if(get(rr+dc,cc+dr)||get(rr-dc,cc-dr)) return -1;
+    }
+    const nR=Math.max(maxR,r+dr*(L-1))-Math.min(minR,r)+1, nC=Math.max(maxC,c+dc*(L-1))-Math.min(minC,c)+1;
+    if(nR>maxN||nC>maxN) return -1;
+    return inter;
+  };
+  const put=(w,r,c,dir)=>{
+    const dr=dir==="D"?1:0, dc=dir==="A"?1:0;
+    for(let k=0;k<w.length;k++){const rr=r+dr*k,cc=c+dc*k,K=key(rr,cc);cells.set(K,w[k]);dirsAt.set(K,(dirsAt.get(K)||"")+dir)}
+    minR=Math.min(minR,r);maxR=Math.max(maxR,r+dr*(w.length-1));minC=Math.min(minC,c);maxC=Math.max(maxC,c+dc*(w.length-1));
+    placed.push({w,r,c,dir});
+  };
+  if(!words.length) return {placed,cells};
+  put(words[0],0,0,R()<.5?"A":"D");
+  for(const w of words.slice(1)){
+    if(placed.length>=limit) break;
+    let best=null;
+    for(const p of placed){
+      const dir=p.dir==="A"?"D":"A";
+      for(let j=0;j<p.w.length;j++)for(let i=0;i<w.length;i++){
+        if(p.w[j]!==w[i]) continue;
+        const pr=p.r+(p.dir==="D"?j:0), pc=p.c+(p.dir==="A"?j:0);
+        const r=pr-(dir==="D"?i:0), c=pc-(dir==="A"?i:0);
+        const inter=fits(w,r,c,dir); if(inter<1) continue;
+        const area=(Math.max(maxR,r+(dir==="D"?w.length-1:0))-Math.min(minR,r)+1)*(Math.max(maxC,c+(dir==="A"?w.length-1:0))-Math.min(minC,c)+1);
+        const sc=inter*40-area+R()*6;
+        if(!best||sc>best.sc) best={r,c,dir,sc};
+      }
+    }
+    if(best) put(w,best.r,best.c,best.dir);
+  }
+  return {placed,cells,minR,minC,rows:maxR-minR+1,cols:maxC-minC+1};
+}
+function makeCrossword(theme,pool,target,R,maxN){
+  // pool: clue-able words in preference order. Try several orders; keep the fullest, most compact grid.
+  let best=null, excluded=new Set();
+  for(let round=0;round<8;round++){
+    const avail=pool.filter(w=>!excluded.has(w));
+    for(let t=0;t<28;t++){
+      const head=shuffle(avail.slice(0,target+6),R).slice(0,target+3).sort((a,b)=>b.length-a.length+(R()-.5)*3);
+      const g=xwPlace(head,R,maxN,target);
+      const crossings=g.placed.reduce((s,p)=>s+p.w.length,0)-g.cells.size;
+      const score=g.placed.length*1000-(g.rows*g.cols)+crossings*30;
+      if(!best||score>best.score) best={...g,score};
+    }
+    // Choose a clue for each answer: distinct passages, and no clue may contain another answer.
+    const answers=new Set(best.placed.map(p=>p.w)), usedRefs=new Set(), bad=[];
+    // Words with the fewest usable clues choose first.
+    const opts=new Map(best.placed.map(p=>[p,shuffle(theme.clues[p.w]||[],R).filter(([ref,txt])=>![...answers].some(a=>a!==p.w&&new RegExp("\\b"+a+"\\b","i").test(txt)))]));
+    for(const p of [...best.placed].sort((a,b)=>opts.get(a).length-opts.get(b).length)){
+      const o=opts.get(p).find(([ref])=>!usedRefs.has(ref));
+      if(!o){bad.push(p.w);continue}
+      p.ref=o[0];p.clue=o[1];usedRefs.add(p.ref);
+    }
+    if(!bad.length) break;
+    bad.forEach(w=>excluded.add(w));best=null;
+  }
+  if(!best) return null;
+  // Normalise coordinates and number the starts in reading order.
+  const P=best.placed.map(p=>({...p,r:p.r-best.minR,c:p.c-best.minC}));
+  const starts=[...new Set(P.map(p=>p.r*1000+p.c))].sort((a,b)=>a-b);
+  P.forEach(p=>p.num=starts.indexOf(p.r*1000+p.c)+1);
+  const grid=new Map();P.forEach(p=>{for(let k=0;k<p.w.length;k++)grid.set((p.r+(p.dir==="D"?k:0))+","+(p.c+(p.dir==="A"?k:0)),p.w[k])});
+  return {type:"crossword",rows:best.rows,cols:best.cols,words:P,grid,
+    across:P.filter(p=>p.dir==="A").sort((a,b)=>a.num-b.num),down:P.filter(p=>p.dir==="D").sort((a,b)=>a.num-b.num)};
+}
+
+/* ---------- other puzzle types ---------- */
+function makeScramble(words,R){
+  return {type:"scramble",items:words.map(w=>{
+    let s=w;
+    for(let t=0;t<60;t++){s=shuffle([...w],R).join("");if(s!==w&&!hasBlocked(s,BLOCK_JUMBLE))break}
+    return {w,s};
+  })};
+}
+function makeCrypto(v,d,R){
+  const A="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const up=v.text.toUpperCase().replace(/[’‘]/g,"'");
+  const words=up.split(/[^A-Z]+/).filter(Boolean);
+  let m,map;
+  for(let t=0;t<80;t++){
+    do{m=shuffle(A,R)}while(m.some((x,i)=>x===A[i]));
+    map={};A.forEach((x,i)=>map[x]=m[i]);
+    if(!words.some(w=>hasBlocked([...w].map(c=>map[c]).join(""),BLOCK_JUMBLE)))break;
+  }
+  const present=[...new Set(up.replace(/[^A-Z]/g,""))];
+  const reveal=new Set(shuffle(present,R).slice(0,d.reveal));
+  return {type:"crypto",verse:v,map,up,reveal};
+}
+const STOP=new Set(["unto","that","with","shall","they","them","thou","thee","there","their","which","have","hath","this","from","were","will","whom","into","also","when","then","what","your","even","shalt"]);
+function makeFill(v,d,R){
+  const toks=v.text.split(/([A-Za-z]+)/);
+  const cand=[];toks.forEach((t,i)=>{if(/^[A-Za-z]{4,}$/.test(t)&&!STOP.has(t.toLowerCase()))cand.push(i)});
+  const chosen=new Set(shuffle(cand,R).slice(0,Math.min(d.blanks,cand.length)));
+  const answers=[...chosen].sort((a,b)=>a-b).map(i=>toks[i]);
+  return {type:"fill",verse:v,toks,chosen,answers};
+}
+
+/* ---------- settings + persistence ---------- */
+const STORE="spp-settings-v2";
+let seed=Math.floor(Math.random()*90000)+10000;
+$("#swatches").innerHTML=PALETTES.map((p,i)=>`<label><input type="radio" name="pal" id="pal-${p.id}" value="${p.id}"${i?"":" checked"}><span><i style="background:linear-gradient(135deg,${p.bg} 62%,${p.accent} 62%)"></i>${p.name}</span></label>`).join("");
+const thBox=t=>`<label class="chk"><input type="checkbox" class="th" id="th-${t.id}" value="${t.id}" checked>${esc(t.name)}</label>`;
+$("#themes").innerHTML=`<div class="thgroup"><span class="thlab">Africa in the Bible</span><div class="grid2">${THEMES.filter(t=>AFRICA_IDS.includes(t.id)).map(thBox).join("")}</div></div>
+<div class="thgroup"><span class="thlab">Stories &amp; teachings</span><div class="grid2">${THEMES.filter(t=>!AFRICA_IDS.includes(t.id)).map(thBox).join("")}</div></div>`;
+function settings(){
+  return {title:$("#title").value.trim()||"Untitled",subtitle:$("#subtitle").value.trim(),author:$("#author").value.trim(),
+    trim:$("input[name=trim]:checked").value,large:$("#large").checked,diff:$("input[name=diff]:checked").value,
+    types:$$(".ptype:checked").map(x=>x.value),themes:$$(".th:checked").map(x=>x.value),
+    sets:+$("input[name=sets]:checked").value,toc:$("#toc").checked,key:$("#key").checked,
+    paper:$("input[name=paper]:checked").value,palette:($("input[name=pal]:checked")||{}).value||"midnight",
+    blurb:$("#blurb").value.trim(),guides:$("#guides").checked,orn:($("input[name=orn]:checked")||{}).value||"kemetic"};
+}
+function save(){
+  try{const S=settings();S.title=$("#title").value;S.blurb=$("#blurb").value;S.seed=seed;S.v=4;localStorage.setItem(STORE,JSON.stringify(S))}catch(e){}
+}
+function restore(){
+  let S=null;try{S=JSON.parse(localStorage.getItem(STORE)||"null")}catch(e){}
+  if(!S)return;
+  const set=(sel,v)=>{const el=$(sel);if(el)el.checked=v};
+  if(typeof S.title==="string")$("#title").value=S.title;
+  if(typeof S.subtitle==="string")$("#subtitle").value=S.subtitle;
+  if(typeof S.author==="string")$("#author").value=S.author;
+  set(`input[name=trim][value="${S.trim}"]`,true);
+  set(`input[name=diff][value="${S.diff}"]`,true);
+  set(`input[name=sets][value="${S.sets}"]`,true);
+  $("#large").checked=!!S.large;$("#toc").checked=S.toc!==false;$("#key").checked=S.key!==false;
+  if(Array.isArray(S.types))$$(".ptype").forEach(x=>x.checked=S.types.includes(x.value)||(x.value==="crossword"&&!S.v));
+  set(`input[name=paper][value="${S.paper}"]`,true);
+  set(`input[name=pal][value="${S.palette}"]`,true);
+  if(typeof S.blurb==="string")$("#blurb").value=S.blurb;
+  if(typeof S.guides==="boolean")$("#guides").checked=S.guides;
+  if(Array.isArray(S.themes))$$(".th").forEach(x=>x.checked=S.themes.includes(x.value)||((S.v||0)<4&&AFRICA_IDS.includes(x.value)));
+  set(`input[name=orn][value="${S.orn}"]`,true);
+  if(Number.isFinite(S.seed))seed=S.seed;
+}
+
+/* ---------- puzzle generation ---------- */
+function verseLimits(S){
+  const crypto={letter:S.large?125:160,"6x9":S.large?95:125}[S.trim];
+  const fill={letter:S.large?190:240,"6x9":S.large?150:200}[S.trim];
+  return {crypto,fill};
+}
+function buildPuzzles(S){
+  const d=DIFF[S.diff], lim=verseLimits(S), list=[]; let reused=0, unclean=0, dropped=0, xwShort=0;
+  const n=Math.max(9,d.n-(S.large?3:0)), count=d.count-(S.large?3:0);
+  for(const tid of S.themes){
+    const theme=THEMES.find(t=>t.id===tid); if(!theme) continue;
+    const RA=rng(hashStr(`${seed}|${tid}|alloc|${S.diff}|${S.trim}|${S.large}`));
+    const vorder=shuffle(theme.verses,RA), used=new Set();
+    const takeVerse=pred=>{
+      let v=vorder.find(x=>!used.has(x)&&pred(x))||vorder.find(x=>!used.has(x));
+      if(!v){v=pick(vorder.filter(pred).length?vorder.filter(pred):vorder,RA);reused++}
+      used.add(v);return v;
+    };
+    const wuse=new Map(theme.words.map(w=>[w,0]));
+    const takeWords=(cands,k,R)=>{const a=shuffle(cands,R).sort((x,y)=>wuse.get(x)-wuse.get(y)).slice(0,k);a.forEach(w=>wuse.set(w,wuse.get(w)+1));return a};
+    for(let v=0;v<S.sets;v++){
+      for(const ty of ["search","crossword","scramble","crypto","fill"]){
+        if(!S.types.includes(ty)) continue;
+        const R=rng(hashStr(`${seed}|${tid}|${ty}|${v}|${S.diff}|${S.large}|${S.trim}`));
+        let p;
+        if(ty==="search"){
+          const ws=takeWords(theme.words.filter(w=>w.length<=n),count,R);
+          p=makeSearch(ws,d,R,n);
+          for(let t=1;t<12&&(p.dropped||!p.clean);t++) p=makeSearch(ws,d,rng(hashStr(`${seed}|${tid}|${v}|retry${t}`)),n);
+          dropped+=p.dropped;if(!p.clean)unclean++;
+        }
+        if(ty==="crossword"){
+          const cfg=XW[S.trim+(S.large?"LP":"")], target=cfg.words[d.xw];
+          const pool=shuffle(theme.words.filter(w=>theme.clues&&theme.clues[w]&&w.length>=3&&w.length<=cfg.max),R).sort((a,b)=>wuse.get(a)-wuse.get(b));
+          p=makeCrossword(theme,pool,target,R,cfg.max);
+          if(!p){xwShort++;continue}
+          p.words.forEach(x=>wuse.set(x.w,wuse.get(x.w)+1));
+          if(p.words.length<target) xwShort++;
+        }
+        if(ty==="scramble"){const pool=theme.words.filter(w=>S.diff==="easy"?w.length<=7:w.length>=4);p=makeScramble(takeWords(pool,d.scr-(S.large?2:0),R),R)}
+        if(ty==="crypto")p=makeCrypto(takeVerse(x=>x.n<=lim.crypto&&x.n>=30),d,R);
+        if(ty==="fill")p=makeFill(takeVerse(x=>x.n<=lim.fill&&x.n>=45),d,R);
+        p.theme=theme;list.push(p);
+      }
+    }
+  }
+  list.forEach((p,i)=>p.num=i+1);
+  return {list,reused,unclean,dropped,xwShort};
+}
+
+/* ---------- page rendering ---------- */
+function dims(S){const T=TRIM[S.trim];return {T,W:T.w*PX,H:T.h*PX,iw:(T.w-T.inn-T.out)*PX,ih:(T.h-T.top-T.bot)*PX}}
+function header(eyebrow,title,instr){
+  return `<div class="ph">${eyebrow?`<div class="eyebrow">${eyebrow}</div>`:""}<h3 class="ptitle">${title}</h3>${instr?`<p class="instr">${instr}</p>`:""}${ORN==="kemetic"?`<div class="lot">${lotus(1.25)}</div>`:'<div class="rule"></div>'}</div>`;
+}
+function renderPuzzle(p,S,D){
+  const d=DIFF[S.diff], info=TYPE_INFO[p.type], eb=`Puzzle ${p.num} · ${esc(info.label)}`, bodyH=D.ih-1.25*PX;
+  if(p.type==="search"){
+    const cols=S.trim==="letter"?3:2, rows=Math.ceil(p.placed.length/cols);
+    const listH=rows*(S.large?.3:.24)*PX+.3*PX;
+    const size=Math.min(D.iw,bodyH-listH), cell=Math.floor(size/p.n), fs=cell*(S.large?.64:.56);
+    return header(eb,esc(p.theme.name),`${info.instr} ${d.dirTxt}`)+
+      `<div class="ws" style="grid-template-columns:repeat(${p.n},${cell}px);grid-auto-rows:${cell}px;font-size:${fs}px">${p.grid.map(l=>`<span>${l}</span>`).join("")}</div>`+
+      `<div class="wl" style="grid-template-columns:repeat(${cols},auto)">${p.placed.map(w=>`<span>${w}</span>`).join("")}</div>`;
+  }
+  if(p.type==="crossword"){
+    // Budget the page: estimate the clue columns' height, give the grid what is left.
+    const fsz=(S.large?12.5:10)*PX/72, lh=fsz*1.3, gap=.045*PX;
+    const colW=(D.iw-.22*PX)/2-1.6*fsz-.04*PX, cpl=colW/(fsz*.46);
+    const colH=list=>list.reduce((s,x)=>s+Math.ceil((x.clue.length+x.ref.length+3)/cpl)*lh+gap,0)+.2*PX;
+    const clueH=Math.max(colH(p.across),colH(p.down))+.2*PX;
+    const bankH=S.diff==="easy"?Math.ceil(p.words.length/(S.trim==="letter"?6:4))*.22*PX+.2*PX:0;
+    const gridH=bodyH-clueH-bankH-.15*PX;
+    const cell=Math.max(.2*PX,Math.min((S.large?.44:.38)*PX,D.iw/p.cols,gridH/p.rows));
+    const nums=new Map();p.words.forEach(w=>nums.set(w.r+","+w.c,w.num));
+    let cells="";p.grid.forEach((_,k)=>{const [r,c]=k.split(",").map(Number),n=nums.get(k);
+      cells+=`<div class="c" style="left:${c*cell}px;top:${r*cell}px;width:${cell+1}px;height:${cell+1}px">${n?`<b style="font-size:${Math.max(6.5,cell*.27).toFixed(1)}px">${n}</b>`:""}</div>`});
+    const li=x=>`<li><b>${x.num}</b><span>${esc(x.clue).replaceAll("{}",'<span class="cbl"></span>')} <i>${esc(x.ref)}</i></span></li>`;
+    const bank=S.diff==="easy"?`<div class="xbank">${p.words.map(w=>w.w).sort().map(w=>`<span>${w}</span>`).join("")}</div>`:"";
+    return header(eb,esc(p.theme.name),info.instr)+
+      `<div class="xw" style="width:${p.cols*cell+1}px;height:${p.rows*cell+1}px">${cells}</div>${bank}`+
+      `<div class="xclues"><div><h5>Across</h5><ol>${p.across.map(li).join("")}</ol></div><div><h5>Down</h5><ol>${p.down.map(li).join("")}</ol></div></div>`;
+  }
+  if(p.type==="scramble"){
+    // Size the jumbled letters so the longest word fits beside its answer line.
+    const lineW=D.T.scrLine*PX, avail=D.iw-.32*PX-lineW-.3*PX;
+    const maxLen=Math.max(...p.items.map(i=>i.s.length));
+    const base=(S.large?17:14)*PX/72, fs=Math.max(9*PX/72,Math.min(base,avail/(maxLen*1.02)));
+    return header(eb,esc(p.theme.name),info.instr)+
+      `<div class="scr">${p.items.map((it,i)=>`<div class="it" style="grid-template-columns:.32in minmax(0,1fr) ${D.T.scrLine}in"><span class="n">${i+1}</span><span class="jw" style="font-size:${fs.toFixed(1)}px">${it.s}</span><span class="ln">${S.diff==="easy"?`<i>${it.w[0]}…</i>`:""}</span></div>`).join("")}</div>`;
+  }
+  if(p.type==="crypto"){
+    const L=p.up.replace(/[^A-Z]/g,"").length;
+    const maxWord=Math.max(...p.up.split(/[^A-Z]+/).map(w=>w.length));
+    // Simulate the wrap: shrink the letter boxes until every row fits the space above the reference line.
+    const toks=p.up.split(" ");
+    const fitsAt=cw=>{
+      const gapX=.2*PX, rowH=cw*1.05+cw*.6*1.25+.14*PX;
+      let rows=1,x=0;
+      for(const t of toks){const w=[...t].reduce((s,ch)=>s+(/[A-Z]/.test(ch)?cw+2:cw*.45),0);if(x&&x+gapX+w>D.iw){rows++;x=w}else x+=(x?gapX:0)+w}
+      return rows*rowH<=bodyH-1.05*PX;
+    };
+    let cw=Math.min((S.large?.42:.34)*PX,D.iw/(maxWord+.8)-2.5);
+    while(cw>9&&!fitsAt(cw)) cw-=.5;
+    const fs=cw*.6;
+    const words=p.up.split(" ").map(w=>`<span class="w">${[...w].map(ch=>/[A-Z]/.test(ch)
+      ?`<span class="cl" style="width:${cw.toFixed(1)}px"><span class="cb" style="height:${(cw*1.05).toFixed(1)}px;font-size:${(fs*1.1).toFixed(1)}px;line-height:${(cw*1.05).toFixed(1)}px">${p.reveal.has(ch)?ch:""}</span><span class="cc" style="font-size:${fs.toFixed(1)}px">${p.map[ch]}</span></span>`
+      :`<span class="pu" style="font-size:${(fs*1.1).toFixed(1)}px">${esc(ch)}</span>`).join("")}</span>`).join("");
+    const given=[...p.reveal].sort().map(ch=>`<span>${p.map[ch]} = ${ch}</span>`).join("");
+    return header(eb,esc(p.theme.name),info.instr)+`<div class="cg">${words}</div><div class="ref">— ${esc(p.verse.ref)}</div><div class="keyrow"><span>Given:</span>${given}</div>`;
+  }
+  if(p.type==="fill"){
+    const html=p.toks.map((t,i)=>p.chosen.has(i)?`<span class="bl" style="width:${Math.max(1.1,t.length*.16)}in"></span>`:esc(t)).join("");
+    const bank=p.answers.slice().sort((a,b)=>a.toLowerCase().localeCompare(b.toLowerCase()));
+    return header(eb,esc(p.theme.name),info.instr)+`<p class="fi">${html}</p><div class="ref">— ${esc(p.verse.ref)}</div><div class="bank"><b>Word bank</b><div>${bank.map(w=>`<span>${esc(w)}</span>`).join("")}</div></div>`;
+  }
+}
+function renderAnswer(p,gridPx){
+  const h=`<h4>Puzzle ${p.num} · ${esc(p.theme.name)} · ${TYPE_INFO[p.type].short}</h4>`;
+  if(p.type==="search"){
+    const cell=Math.floor(gridPx/p.n);
+    return `<div class="ai">${h}<div class="ws" style="margin:0;grid-template-columns:repeat(${p.n},${cell}px);grid-auto-rows:${cell}px;font-size:${cell*.55}px;border-width:1px">${p.grid.map((l,i)=>`<span class="${p.cells.has(i)?"on":"off"}">${l}</span>`).join("")}</div></div>`;
+  }
+  if(p.type==="crossword"){
+    const cell=Math.floor(Math.min(gridPx/Math.max(p.rows,p.cols),.3*PX));
+    let cells="";p.grid.forEach((ch,k)=>{const [r,c]=k.split(",").map(Number);cells+=`<div class="c" style="left:${c*cell}px;top:${r*cell}px;width:${cell+1}px;height:${cell+1}px;font-size:${(cell*.58).toFixed(1)}px">${ch}</div>`});
+    return `<div class="ai">${h}<div class="xw sol" style="margin:0;width:${p.cols*cell+1}px;height:${p.rows*cell+1}px">${cells}</div></div>`;
+  }
+  if(p.type==="scramble") return `<div class="ai">${h}<ol>${p.items.map(it=>`<li>${it.w}</li>`).join("")}</ol></div>`;
+  if(p.type==="crypto") return `<div class="ai">${h}<p>${esc(p.verse.text)} <i>(${esc(p.verse.ref)})</i></p></div>`;
+  if(p.type==="fill") return `<div class="ai">${h}<p>${p.answers.map(esc).join(" · ")}</p></div>`;
+}
+function titleHTML(){
+  const S=settings();
+  const o=ORN==="kemetic"?lotus(2.4):'<div class="orn"><i></i></div>';
+  return `<div class="tp">${o}<h1>${esc(S.title)}</h1>${S.subtitle?`<p class="sub">${esc(S.subtitle)}</p>`:""}${ORN==="kemetic"?lotus(1.1,"currentColor",false):o}${S.author?`<div class="by">${esc(S.author)}</div>`:""}<div class="meta">${state.count} puzzles · ${S.diff} · King James Version${S.large?" · Large print":""}</div></div>`;
+}
+function copyrightHTML(){
+  const S=settings(), yr=new Date().getFullYear();
+  return `<div class="cp"><p class="t">${esc(S.title)}</p>${S.subtitle?`<p class="s">${esc(S.subtitle)}</p>`:""}
+    <p>Copyright © ${yr}${S.author?" "+esc(S.author):""}. All rights reserved.</p>
+    <p>No part of this book may be reproduced in any form without written permission from the publisher, except for brief quotations in reviews.</p>
+    <p>Scripture quotations are from the King James Version of the Bible, which is in the public domain.</p>
+    <p class="s">Edition ${seed} · ${S.diff[0].toUpperCase()+S.diff.slice(1)} · ${S.trim==="letter"?"8.5 × 11 in":"6 × 9 in"}${S.large?" · Large print":""}</p></div>`;
+}
+
+function measureAnswers(S,D,puzzles,colW,gridPx){
+  const host=document.createElement("div");
+  host.className="page"+(S.large?" lp":"");
+  host.style.cssText="position:absolute;left:-99999px;top:0;visibility:hidden;height:auto;overflow:visible";
+  document.body.appendChild(host);
+  const items=puzzles.map(p=>renderAnswer(p,gridPx));
+  host.innerHTML=`<div class="ans" style="width:${colW}px">${items.join("")}</div><div style="width:${D.iw}px">${header("Solutions","Answer Key","")}</div>`;
+  const hs=[...host.querySelectorAll(".ai")].map(e=>e.getBoundingClientRect().height);
+  const headH=host.lastElementChild.getBoundingClientRect().height+parseFloat(getComputedStyle(host.querySelector(".ph")).marginBottom||0);
+  host.remove();
+  return {items,hs,headH};
+}
+let state={pages:[],count:0}, io=null;
+function layout(S,D,res){
+  const puzzles=res.list, pages=[];
+  const add=(kind,cap,render,folio=true)=>pages.push({kind,cap,render,folio});
+  add("title","Title page",titleHTML,false);
+  add("copyright","Copyright page",copyrightHTML,false);
+  const tocPer=S.large?D.T.tocPer-4:D.T.tocPer;
+  const tocCount=S.toc&&puzzles.length?Math.ceil((puzzles.length+(S.key?1:0))/tocPer):0;
+  let next=3+tocCount;
+  const blankBefore=next%2===0; if(blankBefore) next++;
+  const firstPuzzle=next; next+=puzzles.length;
+  const keyBlank=S.key&&puzzles.length&&next%2===0; if(keyBlank) next++;
+  const ansStart=next;
+  if(tocCount){
+    const entries=puzzles.map(p=>({t:p.theme.name,k:TYPE_INFO[p.type].short,pg:firstPuzzle+p.num-1}));
+    if(S.key) entries.push({t:"Answer Key",k:"",pg:ansStart});
+    for(let i=0;i<tocCount;i++){
+      const chunk=entries.slice(i*tocPer,(i+1)*tocPer), first=i===0;
+      add("toc","Contents",()=>(first?header("","Contents",""):`<div style="height:.3in"></div>`)+`<div class="toc">${chunk.map(e=>`<div><span>${esc(e.t)}</span>${e.k?`<span class="t">${e.k}</span>`:""}<span class="d"></span><span class="num">${e.pg}</span></div>`).join("")}</div>`);
+    }
+  }
+  if(blankBefore) add("blank","Blank · puzzles start on a right-hand page",()=>"",false);
+  puzzles.forEach(p=>add("puzzle",`Puzzle ${p.num}`,()=>renderPuzzle(p,S,D)));
+  if(keyBlank) add("blank","Blank · answer key starts on a right-hand page",()=>"",false);
+  if(S.key&&puzzles.length){
+    // Measure every solution at its printed width, then fill columns top to bottom so no page is left half empty.
+    const cols=S.trim==="letter"?2:1, colGap=.3*PX, itemGap=.2*PX;
+    const colW=cols===2?(D.iw-colGap)/2:D.iw, gridPx=cols===2?colW:Math.min(D.iw*.62,3.4*PX);
+    const M=measureAnswers(S,D,puzzles,colW,gridPx);
+    const pagesA=[];let page=null,col=0,used=0;
+    const newPage=()=>{page={cols:[...Array(cols)].map(()=>[]),first:!pagesA.length};pagesA.push(page);col=0;used=0};
+    newPage();
+    puzzles.forEach((p,i)=>{
+      const h=M.hs[i], avail=D.ih-(page.first?M.headH:0)-2;
+      const need=used?used+itemGap+h:h;
+      if(need>avail&&used){ if(col<cols-1){col++;used=0} else newPage() }
+      page.cols[col].push(i);used=(used?used+itemGap:0)+h;
+    });
+    pagesA.forEach(pg=>add("answers","Answer key",()=>(pg.first?header("Solutions","Answer Key",""):"")+
+      `<div class="ansgrid" style="grid-template-columns:repeat(${cols},minmax(0,1fr))">${pg.cols.map(c=>`<div class="ans">${c.map(i=>M.items[i]).join("")}</div>`).join("")}</div>`));
+  }
+  while(pages.length<KDP_MIN) add("notes","Notes",()=>header("","Notes","")+`<div class="notes"></div>`);
+  if(pages.length%2) add("blank","Blank · keeps the page count even",()=>"",false);
+  return pages;
+}
+function fillSheet(sheet){
+  if(sheet.dataset.filled) return;
+  const pg=state.pages[+sheet.dataset.i];
+  sheet.querySelector(".pin").innerHTML=pg.render();
+  sheet.dataset.filled="1";
+}
+function fillAll(){$$(".sheet").forEach(fillSheet)}
+function build(){
+  const S=settings(), D=dims(S), T=D.T;
+  ORN=S.orn;
+  $("#seed").value=seed;
+  $("#pagesize").textContent=`@page{size:${T.w}in ${T.h}in;margin:0}`;
+  const res=buildPuzzles(S);
+  state={pages:[],count:res.list.length};
+  state.pages=layout(S,D,res);
+  if(io) io.disconnect();
+  $("#book").innerHTML=state.pages.map((pg,i)=>{
+    const n=i+1, odd=n%2===1, left=odd?T.inn:T.out, right=odd?T.out:T.inn;
+    let frz="";
+    if(ORN==="kemetic"&&pg.kind!=="blank"&&pg.kind!=="copyright"){
+      const h=pg.kind==="title"?.2:.13, top=Math.max(.28,T.top-.34-(pg.kind==="title"?.06:0));
+      frz=`<div class="frzwrap" style="top:${top}in;left:${left}in;right:${right}in">${frieze("kh"+i+"t",h,["currentColor"])}</div>`;
+      if(pg.kind==="title") frz+=`<div class="frzwrap flip" style="bottom:${Math.max(.28,T.bot-.4)}in;left:${left}in;right:${right}in">${frieze("kh"+i+"b",h,["currentColor"])}</div>`;
+    }
+    const folio=pg.folio?`<div class="folio" style="${odd?`right:${T.out}in`:`left:${T.out}in`}">${n}</div>`:"";
+    return `<div class="sheet" data-i="${i}" data-kind="${pg.kind}" data-w="${D.W}" data-h="${D.H}"><div class="page${S.large?" lp":""}" style="width:${T.w}in;height:${T.h}in"><div class="pin" style="top:${T.top}in;bottom:${T.bot}in;left:${left}in;right:${right}in"></div>${frz}${folio}</div></div><div class="cap">${n} · ${esc(pg.cap)}</div>`;
+  }).join("");
+  // Draw page contents only as they near the screen; printing fills every page first.
+  if("IntersectionObserver" in window){
+    io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){fillSheet(e.target);io.unobserve(e.target)}}),{rootMargin:"1600px 0px"});
+    $$(".sheet").forEach(s=>io.observe(s));
+  } else fillAll();
+  const np=state.pages.length;
+  $("#np").textContent=np;$("#nz").textContent=res.list.length;$("#tnp").textContent=np;
+  $("#tsum").textContent=`${S.diff[0].toUpperCase()+S.diff.slice(1)} · ${S.themes.length} theme${S.themes.length===1?"":"s"}`;
+  const flags=[];
+  if(!res.list.length) flags.push("Pick at least one theme and one puzzle type.");
+  if(res.reused) flags.push(`${res.reused} verse${res.reused===1?" is":"s are"} used twice. Choose fewer sets per theme to avoid repeats.`);
+  if(res.dropped) flags.push(`${res.dropped} word${res.dropped===1?"":"s"} could not fit in their grids and were left off the word lists.`);
+  if(res.xwShort) flags.push(`${res.xwShort} crossword${res.xwShort===1?" has":"s have"} fewer words than planned because the theme ran short of clued words.`);
+  if(res.unclean) flags.push(`${res.unclean} grid${res.unclean===1?"":"s"} could not be fully cleaned. Reshuffle to regenerate.`);
+  $("#flag").hidden=!flags.length;$("#flag").textContent=flags.join(" ");
+  const kdp=$("#kdp"), okKdp=np>=KDP_MIN&&np%2===0&&!res.reused&&!res.unclean&&res.list.length;
+  kdp.className="pill "+(okKdp?"ok":"warn");kdp.textContent=okKdp?"KDP ready":"Check notes";
+  fit();save();
+  if(pview==="cover") renderCover();
+}
+function refreshMeta(){
+  $$('.sheet[data-kind="title"],.sheet[data-kind="copyright"]').forEach(s=>{delete s.dataset.filled;fillSheet(s)});
+  if(pview==="cover") renderCover();
+  save();
+}
+function fit(){
+  const avail=Math.min($("#book").clientWidth,620);
+  if(!avail) return;
+  $$(".sheet").forEach(s=>{
+    const W=+s.dataset.w,H=+s.dataset.h,k=Math.min(1,avail/W);
+    s.style.width=W*k+"px";s.style.height=H*k+"px";
+    s.firstElementChild.style.transform=`scale(${k})`;
+  });
+}
+
+/* ---------- cover ---------- */
+let pview="interior";
+function coverDims(S){
+  const T=TRIM[S.trim], K=KDP_COVER, pages=state.pages.length;
+  const spine=pages*K.perPage[S.paper];
+  return {T,K,pages,spine,W:K.bleed*2+T.w*2+spine,H:T.h+K.bleed*2};
+}
+function defaultBlurb(S){
+  const n=state.count, names=S.themes.map(id=>THEMES.find(t=>t.id===id)).filter(Boolean).map(t=>t.name);
+  const kinds=S.types.map(t=>({search:"word searches",crossword:"crosswords",scramble:"word scrambles",crypto:"verse cryptograms",fill:"verse fill-ins"}[t]));
+  const list=kinds.length>1?kinds.slice(0,-1).join(", ")+" and "+kinds.at(-1):kinds[0]||"puzzles";
+  const span=names.length>1?` across ${names.length} themes, from ${names[0]} to ${names.at(-1)}`:names.length?` on ${names[0]}`:"";
+  return `${n} puzzles drawn from the King James Bible: ${list}${span}. Every clue and verse is quoted from Scripture, and every puzzle has a full solution in the answer key.`;
+}
+function coverMotif(S,cols,rows,cellIn){
+  // A small word-search panel with a word from the title circled.
+  const words=(S.title.toUpperCase().match(/[A-Z]+/g)||[]).filter(w=>w.length>=3&&w.length<=cols).sort((a,b)=>b.length-a.length);
+  const word=words[0]||"WORD", R=rng(hashStr(S.title+"|cover")), row=Math.floor(rows/2), start=Math.floor((cols-word.length)/2);
+  const fill="ABCDEFGHIJKLMNOPRSTUVWY";let html="";
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
+    const inW=r===row&&c>=start&&c<start+word.length;
+    const ch=inW?word[c-start]:fill[Math.floor(R()*fill.length)];
+    const pos=!inW?"":word.length===1?"":c===start?" l":c===start+word.length-1?" r":" m";
+    html+=`<span class="${inW?"h"+pos:""}">${ch}</span>`;
+  }
+  return `<div class="cv-grid" style="grid-template-columns:repeat(${cols},${cellIn}in);grid-auto-rows:${cellIn}in;font-size:${(cellIn*.5*72).toFixed(1)}pt">${html}</div>`;
+}
+function renderCover(){
+  const S=settings(), C=coverDims(S), {T,K}=C, b=K.bleed, pal=findPal(S.palette);
+  const sc=T.w/8.5, pt=v=>(v*(.55+.45*sc)).toFixed(1)+"pt";
+  const spineX=b+T.w, frontX=b+T.w+C.spine;
+  const titleLen=S.title.length, titlePt=Math.max(26,Math.min(50,50*16/Math.max(16,titleLen)))*(.6+.4*sc);
+  const frameIn=.32;
+  // Front
+  const front=`<div class="cv-panel cv-front" style="left:${frontX}in;top:${b}in;width:${T.w}in;height:${T.h}in;padding:${.95*sc+.25}in ${.7*sc+.25}in ${.85*sc+.25}in;justify-content:space-between">
+    <div class="cv-frame" style="inset:${frameIn}in"></div>
+    <div class="cv-frz" style="top:${frameIn+.14}in;left:${frameIn+.14}in;right:${frameIn+.14}in">${frieze("cvt",.2*sc+.08,[pal.accent,pal.acc2])}</div>
+    <div class="cv-frz flip" style="bottom:${frameIn+.14}in;left:${frameIn+.14}in;right:${frameIn+.14}in">${frieze("cvb",.2*sc+.08,[pal.accent,pal.acc2])}</div>
+    <div class="cv-eyebrow" style="font-size:${pt(9.5)}">Bible Puzzle Book${S.large?" · Large Print":""}</div>
+    <div style="display:flex;flex-direction:column;align-items:center;gap:${.22*sc+.06}in">
+      <h1 class="cv-title" style="font-size:${titlePt.toFixed(1)}pt">${esc(S.title)}</h1>
+      ${lotus(1.5*sc+.35,pal.accent)}
+      ${coverMotif(S,9,5,.36*sc+.06)}
+      ${S.subtitle?`<p class="cv-sub" style="font-size:${pt(16)}">${esc(S.subtitle)}</p>`:""}
+    </div>
+    <div class="cv-author" style="font-size:${pt(11)}">${esc(S.author||"")}</div>
+  </div>`;
+  // Back
+  const bc=K.barcode, blurb=S.blurb||defaultBlurb(S);
+  const kinds=S.types.map(t=>({search:"Word searches",crossword:"Crosswords with verse clues",scramble:"Word scrambles",crypto:"Verse cryptograms",fill:"Verse fill-ins"}[t]));
+  const back=`<div class="cv-panel cv-back" style="left:${b}in;top:${b}in;width:${T.w}in;height:${T.h}in;padding:${.85*sc+.2}in ${.7*sc+.2}in ${bc.h+bc.inset+.35}in;gap:${.24*sc+.08}in">
+    <div class="cv-frz" style="top:.42in;left:.42in;right:.42in">${frieze("cvk",.2*sc+.08,[pal.accent,pal.acc2])}</div>
+    <p class="cv-quote" style="font-size:${pt(19)}">“Thy word have I hid in mine heart, that I might not sin against thee.”<cite style="font-size:${pt(9)}">Psalm 119:11</cite></p>
+    <p class="cv-blurb" style="font-size:${pt(13.5)}">${esc(blurb)}</p>
+    <ul class="cv-list" style="font-size:${pt(11)}">${kinds.map(k=>`<li>${k}</li>`).join("")}<li>${S.diff[0].toUpperCase()+S.diff.slice(1)} difficulty${S.large?", large print":""}</li><li>Complete answer key</li></ul>
+  </div>`;
+  // Spine
+  const spineFont=(C.spine-2*K.spineMargin)*.6*72;
+  const spineOK=C.pages>=K.spineTextMin&&spineFont>=6;
+  const spine=`<div class="cv-panel cv-spine" style="left:${spineX}in;top:${b}in;width:${C.spine}in;height:${T.h}in;font-size:${Math.min(15,spineFont).toFixed(1)}pt">${spineOK?`<span>${esc(S.title)}</span>${S.author?`<span class="a">${esc(S.author)}</span>`:""}`:""}</div>`;
+  // Guides (screen only)
+  let g="";
+  if(S.guides){
+    const sf=K.safe;
+    g+=`<div class="guide g-bleed" style="inset:0;border-width:${b}in"></div>`;
+    g+=`<div class="guide g-trim" style="left:${b}in;top:${b}in;width:${C.W-2*b}in;height:${T.h}in"></div>`;
+    g+=`<div class="guide g-safe" style="left:${b+sf}in;top:${b+sf}in;width:${T.w-2*sf}in;height:${T.h-2*sf}in"></div>`;
+    g+=`<div class="guide g-safe" style="left:${frontX+sf}in;top:${b+sf}in;width:${T.w-2*sf}in;height:${T.h-2*sf}in"></div>`;
+    g+=`<div class="guide g-fold" style="left:${spineX}in"></div><div class="guide g-fold" style="left:${frontX}in"></div>`;
+    g+=`<div class="guide g-bar" style="left:${spineX-bc.inset-bc.w}in;top:${b+T.h-bc.inset-bc.h}in;width:${bc.w}in;height:${bc.h}in">Barcode area<br>${bc.w} × ${bc.h} in<br>KDP prints the barcode here</div>`;
+    g+=`<div class="g-lab guide" style="left:${b+.04}in;top:${b+.04}in">Trim</div>`;
+    g+=`<div class="g-lab guide" style="left:${b+sf+.04}in;top:${b+sf+.22}in;color:#1C5A8C">Safe zone</div>`;
+    g+=`<div class="g-lab guide" style="left:${spineX+C.spine/2}in;top:${b+.04}in;transform:translateX(-50%)">Spine ${C.spine.toFixed(3)} in</div>`;
+    g+=`<div class="g-lab guide" style="left:.02in;top:.01in">Bleed ${b} in</div>`;
+  }
+  const el=$("#cover");
+  el.style.cssText=`width:${C.W}in;height:${C.H}in;background:${pal.bg};color:${pal.ink};--cv-bg:${pal.bg};--cv-ink:${pal.ink};--cv-accent:${pal.accent}`;
+  el.innerHTML=back+spine+front+g;
+  $("#cdims").innerHTML=`<span>Full cover <b>${C.W.toFixed(3)} × ${C.H.toFixed(3)} in</b></span><span>Spine <b>${C.spine.toFixed(3)} in</b></span><span><b>${C.pages}</b> pages, ${S.paper} paper</span><span>Trim ${S.trim==="letter"?"8.5 × 11":"6 × 9"} in</span>`;
+  $("#covernote").textContent=(spineOK?"":C.pages<K.spineTextMin?`The spine is blank: KDP allows spine text only from ${K.spineTextMin} pages, and this book has ${C.pages}. `:"The spine is too narrow for readable text, so it is left blank. ")+
+    "The spine width updates whenever the page count changes. Upload the cover only after the interior is final. Guides show on screen only and never print.";
+  fitCover();
+}
+function fitCover(){
+  const S=settings(), C=coverDims(S), avail=Math.min($("#coverView").clientWidth,1000);
+  if(!avail) return;
+  const k=Math.min(1,avail/(C.W*PX));
+  $("#cwrap").style.width=C.W*PX*k+"px";$("#cwrap").style.height=C.H*PX*k+"px";
+  $("#cover").style.transform=`scale(${k})`;
+}
+function setPView(v){
+  pview=v;
+  $("#v-int").setAttribute("aria-pressed",v==="interior");$("#v-cov").setAttribute("aria-pressed",v==="cover");
+  $("#book").hidden=v==="cover";$("#coverView").hidden=v!=="cover";
+  if(v==="cover"){$("#flag").hidden=true;renderCover()}else{$("#flag").hidden=!$("#flag").textContent;fit()}
+  try{localStorage.setItem("spp-pview",v)}catch(e){}
+}
+function printCover(){
+  const S=settings(), C=coverDims(S), guides=S.guides;
+  if(pview!=="cover") setPView("cover");
+  $("#guides").checked=false;renderCover();
+  document.body.classList.add("print-cover");document.body.style.background=findPal(S.palette).bg;
+  $("#pagesize").textContent=`@page{size:${C.W.toFixed(4)}in ${C.H.toFixed(4)}in;margin:0}`;
+  const done=()=>{document.body.classList.remove("print-cover");document.body.style.background="";$("#guides").checked=guides;$("#pagesize").textContent=`@page{size:${C.T.w}in ${C.T.h}in;margin:0}`;renderCover();window.removeEventListener("afterprint",done)};
+  window.addEventListener("afterprint",done);
+  window.print();
+}
+$("#v-int").onclick=()=>setPView("interior");
+$("#v-cov").onclick=()=>setPView("cover");
+
+/* ---------- events ---------- */
+const META=new Set(["title","subtitle","author","blurb"]);
+const COVER_ONLY=new Set(["guides"]);
+const COVER_NAMES=new Set(["paper","pal"]);
+let tm;const later=()=>{clearTimeout(tm);tm=setTimeout(build,150)};
+const aside=document.querySelector("aside");
+const coverOnly=t=>COVER_ONLY.has(t.id)||COVER_NAMES.has(t.name);
+aside.addEventListener("input",e=>{if(META.has(e.target.id))refreshMeta();else if(coverOnly(e.target)){if(pview==="cover")renderCover();save()}else if(e.target.id!=="seed")later()});
+aside.addEventListener("change",e=>{
+  if(META.has(e.target.id)||coverOnly(e.target))return;
+  if(e.target.id==="seed"){const v=parseInt(e.target.value.replace(/\D/g,""),10);if(Number.isFinite(v)&&v>0){seed=v;build()}else e.target.value=seed;return}
+  later();
+});
+$("#seed").addEventListener("keydown",e=>{if(e.key==="Enter")e.target.blur()});
+$("#all").onclick=()=>{$$(".th").forEach(x=>x.checked=true);build()};
+$("#afr").onclick=()=>{$$(".th").forEach(x=>x.checked=AFRICA_IDS.includes(x.value));build()};
+$("#none").onclick=()=>{$$(".th").forEach(x=>x.checked=false);build()};
+const reshuffle=()=>{seed=Math.floor(Math.random()*90000)+10000;build()};
+$("#reshuffle").onclick=reshuffle;
+window.addEventListener("resize",()=>{fit();if(pview==="cover")fitCover()});
+window.addEventListener("beforeprint",fillAll);
+function setView(v){
+  $("#app").dataset.view=v;
+  $("#tab-settings").setAttribute("aria-selected",v==="settings");
+  $("#tab-proofs").setAttribute("aria-selected",v==="proofs");
+  try{localStorage.setItem("spp-view",v)}catch(e){}
+  window.scrollTo(0,0);
+  if(v==="proofs") fit();
+}
+$("#tab-settings").onclick=()=>setView("settings");
+$("#tab-proofs").onclick=()=>setView("proofs");
+$("#shuffle2").onclick=()=>{reshuffle();setView("proofs")};
+// Printing only works when this page is opened directly in a browser tab.
+let topLevel=false;try{topLevel=window.self===window.top}catch(e){}
+if(topLevel){$("#printCover").hidden=false;$("#printCover").onclick=printCover;$("#print").hidden=false;$("#printnote").textContent="Print with margins set to None and background graphics on. Each proof becomes one page at the chosen trim size.";$("#print").onclick=()=>{fillAll();window.print()}}
+$("#topfrieze").innerHTML=frieze("appfrz",.16,["#C8A84B","#4F7FD0","#45B3A8","#CF6542"]);
+restore();
+try{const v=localStorage.getItem("spp-pview");if(v==="cover")pview="cover"}catch(e){}
+setPView(pview);
+try{const v=localStorage.getItem("spp-view");if(v==="settings"||v==="proofs")setView(v)}catch(e){}
+build();
+document.fonts&&document.fonts.ready.then(()=>{$$(".sheet").forEach(s=>delete s.dataset.filled);build()});
+</script>
