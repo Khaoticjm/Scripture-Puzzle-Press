@@ -195,6 +195,25 @@ main{display:flex;flex-direction:column;gap:14px;min-width:0}
 .ans p{margin:0;font-size:11.5pt;line-height:1.45}
 .ans ol{margin:0;padding-left:.28in;columns:2;column-gap:.2in;font-family:var(--f-ui);font-size:10pt;letter-spacing:.04em}
 
+/* ---------- sticky view bar + sidebar correlation ---------- */
+.mainhead{position:sticky;top:env(safe-area-inset-top,0px);z-index:12;background:var(--bg);padding-block:8px 10px;margin-block:-8px -4px;
+  border-bottom:1px solid transparent;transition:border-color .2s}
+.mainhead.stuck{border-bottom-color:var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:13;background:var(--bg)}
+.viewrow{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center}
+.jump{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.jump span{font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold-dim);margin-right:2px}
+.jump button{font:inherit;font-size:11.5px;letter-spacing:.04em;color:var(--muted);background:transparent;border:1px solid var(--line);padding:6px 10px;cursor:pointer}
+.jump button:hover{color:var(--gold);border-color:var(--gold-muted)}
+.jump button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.sheet{scroll-margin-top:calc(var(--headH,60px) + 16px)}
+#coverView,#listView{scroll-margin-top:calc(var(--headH,60px) + 12px)}
+aside fieldset{transition:box-shadow .3s}
+aside fieldset.fs-active{box-shadow:inset 2px 0 0 var(--gold);padding-left:12px;margin-left:-12px}
+aside fieldset.fs-active legend::after{content:" \00B7  shown now";color:var(--muted);letter-spacing:.14em;font-family:var(--a-ui);font-weight:400;font-size:9px}
+aside fieldset.fs-flash{box-shadow:inset 2px 0 0 var(--gold-light),0 0 0 1px var(--gold-muted)}
+@media print{.mainhead,.jump{display:none!important}}
+
 /* ---------- KDP listing ---------- */
 #listView{display:flex;flex-direction:column;gap:18px;min-width:0}
 .lst{background:var(--panel);border:1px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
@@ -356,7 +375,7 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
       <p>Word searches, crosswords, scrambles, cryptograms and verse fill-ins, with contents, copyright page, answer key and a matching KDP cover. Every verse is King James Version (public domain).</p>
     </div>
 
-    <fieldset>
+    <fieldset id="fs-book">
       <legend>Book &amp; series</legend>
       <label class="f">Start from<select id="preset"></select></label>
       <div class="seedrow">
@@ -368,7 +387,7 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
       <label class="f">Author<input type="text" id="author" placeholder="Your name"></label>
     </fieldset>
 
-    <fieldset>
+    <fieldset id="fs-trim">
       <legend>Trim &amp; print</legend>
       <div class="seg" role="radiogroup" aria-label="Trim size">
         <label><input type="radio" name="trim" id="trim-letter" value="letter" checked><span>8.5 × 11 in</span></label>
@@ -418,7 +437,7 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
       <label class="chk"><input type="checkbox" id="key" checked>Answer key</label>
     </fieldset>
 
-    <fieldset>
+    <fieldset id="fs-cover">
       <legend>Cover</legend>
       <label class="f">Interior paper</label>
       <div class="seg" role="radiogroup" aria-label="Interior paper">
@@ -456,10 +475,21 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
       <h2>Page <em>proofs</em></h2>
       <div class="stats"><span><b id="np">0</b> pages</span><span><b id="nz">0</b> puzzles</span><span class="pill ok" id="kdp">KDP ready</span></div>
     </div>
-    <div class="viewseg" role="group" aria-label="Show">
-      <button type="button" id="v-int" aria-pressed="true">Interior</button>
-      <button type="button" id="v-cov" aria-pressed="false">Cover</button>
-      <button type="button" id="v-lst" aria-pressed="false">KDP listing</button>
+    <div class="mainhead" id="mainhead">
+      <div class="viewrow">
+        <div class="viewseg" role="group" aria-label="Show">
+          <button type="button" id="v-int" aria-pressed="true">Interior</button>
+          <button type="button" id="v-cov" aria-pressed="false">Cover</button>
+          <button type="button" id="v-lst" aria-pressed="false">KDP listing</button>
+        </div>
+        <nav class="jump" id="jump" aria-label="Jump to a section of the book">
+          <span>Jump to</span>
+          <button type="button" data-kind="title">Title</button>
+          <button type="button" data-kind="toc">Contents</button>
+          <button type="button" data-kind="puzzle">Puzzles</button>
+          <button type="button" data-kind="answers">Answer key</button>
+        </nav>
+      </div>
     </div>
     <p class="kdpset" id="kdpset"></p>
     <p class="flag" id="flag" hidden></p>
@@ -1191,13 +1221,39 @@ function setCoverZoom(z){
 try{const z=localStorage.getItem("spp-czoom");if(["full","front","back"].includes(z))coverZoom=z}catch(e){}
 // Refit whenever the cover area changes size, including when it reappears after being hidden.
 if("ResizeObserver" in window) new ResizeObserver(()=>{if(pview==="cover")fitCover()}).observe($("#coverView"));
-function setPView(v){
+const VIEW_FS={interior:"#fs-trim",cover:"#fs-cover",listing:"#fs-book"};
+const smooth=()=>matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth";
+function goToView(v){
+  // Bring the chosen view to the top of the screen, just under the sticky buttons.
+  const head=$("#mainhead"), y=head.getBoundingClientRect().top+scrollY-parseFloat(getComputedStyle(head).top||0);
+  if(Math.abs(scrollY-y)>2) scrollTo({top:y,behavior:smooth()});
+  // Point the sidebar at the settings that belong to this view (desktop, where the sidebar is beside the proofs).
+  const fs=$(VIEW_FS[v]), aside=document.querySelector("aside");
+  if(fs&&aside&&aside.offsetParent&&getComputedStyle(aside).position==="sticky"){
+    aside.scrollTo({top:Math.max(0,fs.offsetTop-aside.offsetTop-14),behavior:smooth()});
+    fs.classList.add("fs-flash");setTimeout(()=>fs.classList.remove("fs-flash"),1200);
+  }
+}
+function setPView(v,go){
   pview=v;
+  $$("aside fieldset").forEach(f=>f.classList.remove("fs-active"));
+  const fsA=$(VIEW_FS[v]);if(fsA)fsA.classList.add("fs-active");
+  $("#jump").hidden=v!=="interior";
   $("#v-int").setAttribute("aria-pressed",v==="interior");$("#v-cov").setAttribute("aria-pressed",v==="cover");$("#v-lst").setAttribute("aria-pressed",v==="listing");
   $("#book").hidden=v!=="interior";$("#coverView").hidden=v!=="cover";$("#listView").hidden=v!=="listing";
   if(v==="cover"){$("#flag").hidden=true;renderCover()}else if(v==="listing"){$("#flag").hidden=true;renderListing()}else{$("#flag").hidden=!$("#flag").textContent;fit()}
   try{localStorage.setItem("spp-pview",v)}catch(e){}
+  if(go) requestAnimationFrame(()=>goToView(v));
 }
+// Jump-to buttons in the Interior view.
+$$("#jump button").forEach(b=>b.onclick=()=>{
+  const s=document.querySelector(`.sheet[data-kind="${b.dataset.kind}"]`); if(!s) return;
+  fillSheet(s); s.scrollIntoView({block:"start",behavior:smooth()});
+});
+// Keep the sheets' scroll offset in step with the sticky bar's height.
+function syncHead(){const h=$("#mainhead").offsetHeight;document.documentElement.style.setProperty("--headH",h+"px")}
+addEventListener("resize",syncHead);
+addEventListener("scroll",()=>{const h=$("#mainhead");h.classList.toggle("stuck",h.getBoundingClientRect().top<=parseFloat(getComputedStyle(h).top||0)+.5&&scrollY>40)},{passive:true});
 function printCover(){
   const S=settings(), C=coverDims(S), guides=S.guides;
   if(pview!=="cover") setPView("cover");
@@ -1311,9 +1367,12 @@ async function downloadCoverPDF(){
     setTimeout(()=>{btn.textContent=label;btn.disabled=false},2500);
   }
 }
-$("#v-int").onclick=()=>setPView("interior");
-$("#v-cov").onclick=()=>setPView("cover");
-$("#v-lst").onclick=()=>setPView("listing");
+$("#v-int").onclick=()=>setPView("interior",true);
+$("#v-cov").onclick=()=>setPView("cover",true);
+$("#v-lst").onclick=()=>setPView("listing",true);
+// Changing a cover setting shows the cover, so the change is visible straight away.
+$("#fs-cover").addEventListener("input",e=>{if(e.target.closest("button"))return;if(pview!=="cover")setPView("cover",true)});
+$("#fs-cover").addEventListener("change",e=>{if(pview!=="cover")setPView("cover",true)});
 
 /* ---------- presets ---------- */
 $("#preset").innerHTML=`<option value="">Custom (keep my settings)</option>`+PRESETS.map(p=>`<option value="${p.id}">${esc(p.label)}</option>`).join("");
@@ -1387,7 +1446,7 @@ if(canExport){
 $("#topfrieze").innerHTML=frieze("appfrz",.16,["#C8A84B","#4F7FD0","#45B3A8","#CF6542"]);
 restore();
 try{const v=localStorage.getItem("spp-pview");if(v==="cover"||v==="listing")pview=v}catch(e){}
-setPView(pview);
+setPView(pview);syncHead();
 try{const v=localStorage.getItem("spp-view");if(v==="settings"||v==="proofs")setView(v)}catch(e){}
 build();
 document.fonts&&document.fonts.ready.then(()=>{$$(".sheet").forEach(s=>delete s.dataset.filled);build()});
