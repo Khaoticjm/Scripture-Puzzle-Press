@@ -75,7 +75,9 @@ button.btn:hover{background:var(--gold-light)}
 button.btn.ghost{background:transparent;color:var(--gold)}
 button.btn.ghost:hover{background:rgba(200,168,75,.08)}
 .seedrow{display:flex;gap:8px;align-items:flex-end}
-.seedrow label.f{flex:1}
+.seedrow label.f{flex:1;min-width:0}
+label.f{min-width:0}
+label.f input,label.f select,label.f textarea{width:100%;box-sizing:border-box}
 .seedrow input{font-variant-numeric:tabular-nums;letter-spacing:.06em}
 .note{font-size:12px;line-height:1.6;color:var(--muted);border-left:1px solid var(--gold-muted);padding:2px 0 2px 12px;margin:0}
 
@@ -189,6 +191,25 @@ main{display:flex;flex-direction:column;gap:14px;min-width:0}
 .ans h4{margin:0;font-family:var(--f-ui);font-size:8.5pt;letter-spacing:.12em;text-transform:uppercase}
 .ans p{margin:0;font-size:11.5pt;line-height:1.45}
 .ans ol{margin:0;padding-left:.28in;columns:2;column-gap:.2in;font-family:var(--f-ui);font-size:10pt;letter-spacing:.04em}
+
+/* ---------- KDP listing ---------- */
+#listView{display:flex;flex-direction:column;gap:18px;min-width:0}
+.lst{background:var(--panel);border:1px solid var(--line);padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.lsth{font-family:var(--a-display);font-size:11px;font-weight:600;letter-spacing:.26em;text-transform:uppercase;color:var(--gold);margin:0}
+.lstbar{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.lstcount{font-size:11.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.lstcount.warn{color:var(--warn)}
+.lstprev{background:var(--card);border:1px solid var(--line);border-left:2px solid var(--gold-muted);padding:16px 18px;font-family:var(--a-head);font-size:17px;line-height:1.55;color:var(--fg);max-width:72ch}
+.lstprev p{margin:0 0 .8em}.lstprev p:last-child{margin-bottom:0}
+.lstprev ul{margin:0 0 .8em;padding-left:1.2em}
+.lstprev i{color:var(--gold-light)}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px 14px;align-items:center}
+.kv dt{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold-dim);margin:0}
+.kv dd{margin:0;font-size:14px;color:var(--fg);min-width:0;overflow-wrap:anywhere}
+.kv button{font:inherit;font-size:10px;letter-spacing:.14em;text-transform:uppercase;background:transparent;color:var(--gold);border:1px solid var(--gold-muted);padding:5px 10px;cursor:pointer}
+.kv button:hover{border-color:var(--gold)}
+@media (max-width:600px){.kv{grid-template-columns:minmax(0,1fr) auto}.kv dt{grid-column:1/-1;margin-top:6px}}
+@media print{#listView{display:none!important}}
 
 /* ---------- cover ---------- */
 .viewseg{display:flex;border:1px solid var(--gold-muted);overflow:hidden;align-self:flex-start}
@@ -434,10 +455,31 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
     <div class="viewseg" role="group" aria-label="Show">
       <button type="button" id="v-int" aria-pressed="true">Interior</button>
       <button type="button" id="v-cov" aria-pressed="false">Cover</button>
+      <button type="button" id="v-lst" aria-pressed="false">KDP listing</button>
     </div>
     <p class="kdpset" id="kdpset"></p>
     <p class="flag" id="flag" hidden></p>
     <div id="book"></div>
+    <div id="listView" hidden>
+      <section class="lst">
+        <h3 class="lsth">Book details</h3>
+        <p class="note">Copy each field into KDP's Paperback Details page.</p>
+        <div class="kv" id="lstFields"></div>
+      </section>
+      <section class="lst">
+        <div class="lstbar"><h3 class="lsth">Book description</h3><span class="lstcount" id="lstCount"></span></div>
+        <div class="lstprev" id="lstDesc"></div>
+        <div class="row"><button class="btn" type="button" id="cpDesc">Copy description</button><button class="btn ghost" type="button" id="cpDescHtml">Copy as HTML</button></div>
+        <p class="note">Paste <b>Copy description</b> into KDP's description editor. If the bullets or italics drop, switch the editor to its HTML view and paste <b>Copy as HTML</b> instead.</p>
+      </section>
+      <section class="lst">
+        <div class="lstbar"><h3 class="lsth">Series description</h3><span class="lstcount" id="lstSerCount"></span></div>
+        <div class="lstprev" id="lstSeries"></div>
+        <div class="row"><button class="btn" type="button" id="cpSeries">Copy series description</button><button class="btn ghost" type="button" id="cpSeriesHtml">Copy as HTML</button></div>
+        <p class="note">Use this on the series page under KDP's Series settings. It only needs to be added once.</p>
+      </section>
+      <textarea id="cpFallback" aria-hidden="true" tabindex="-1" style="position:absolute;left:-9999px;top:0;width:1px;height:1px"></textarea>
+    </div>
     <div id="coverView" hidden>
       <div class="cvbar">
         <div class="viewseg" role="group" aria-label="Cover preview">
@@ -498,6 +540,26 @@ const PRESETS=[
   {id:"v5",label:"Vol. 5 · Simon of Cyrene",volume:"Vol. 5",title:"Simon of Cyrene",themes:["church","miracles","easter","paul","armor"],pal:"papyrus"},
   {id:"se",label:"Special Edition · From Cush to Calvary",volume:"Special Edition",title:"From Cush to Calvary",subtitle:"The Complete Collection of Bible Word Searches, Crosswords & Verse Puzzles",themes:"all",pal:"sphinx",sets:1}
 ];
+// KDP book descriptions per volume. {n} is replaced with the book's real puzzle count.
+const LISTINGS={
+  v1:{quote:"From beyond the rivers of Ethiopia my suppliants, even the daughter of my dispersed, shall bring mine offering.",ref:"Zephaniah 3:10",
+    paras:["The first volume of Stretch Forth begins where Scripture does: in Eden, beside the river Gihon that \u201ccompasseth the whole land of Ethiopia.\u201d From there it traces Cush through the Bible. Moses married an Ethiopian woman, Ebed-melech the Ethiopian rescued Jeremiah from the dungeon, and an Ethiopian official was baptized on the road to Gaza. Alongside these stories are Creation, Noah and the flood, the Psalms, and the Prophets, from Micah\u2019s call to \u201cdo justly\u201d to Isaiah\u2019s promise that those who wait upon the LORD \u201cshall mount up with wings as eagles.\u201d"]},
+  v2:{quote:"When Israel was a child, then I loved him, and called my son out of Egypt.",ref:"Hosea 11:1",
+    paras:["Egypt runs through the whole Bible, from Abraham to Jesus. This volume follows Joseph from the pit to \u201cruler throughout all the land of Egypt,\u201d the Hebrew midwives who \u201cfeared God,\u201d and Moses, \u201clearned in all the wisdom of the Egyptians.\u201d It ends with the holy family\u2019s flight into Egypt. Along the way are the Patriarchs, the Exodus, Daniel in Babylon, the Nativity, and Isaiah\u2019s remarkable word: \u201cBlessed be Egypt my people.\u201d"]},
+  v3:{quote:"\u2026and, behold, the half was not told me.",ref:"1 Kings 10:7",
+    paras:["The Queen of Sheba came to Jerusalem \u201cto prove him with hard questions.\u201d She brought gold, spices and precious stones, and left declaring that Solomon\u2019s wisdom exceeded every report. Centuries later, Jesus named her \u201cthe queen of the south\u201d who came \u201cfrom the uttermost parts of the earth.\u201d This volume pairs her story with Proverbs and Wisdom, David and Goliath, the Life of Jesus, and the animals of the Bible, from the sparrow to the leviathan."]},
+  v4:{quote:"And she called the name of the LORD that spake unto her, Thou God seest me.",ref:"Genesis 16:13",
+    paras:["Hagar, an Egyptian handmaid alone in the wilderness, became the only person in Scripture to give God a name. The angel of the LORD found her \u201cby a fountain of water.\u201d When her son cried, God opened her eyes to a well and promised to make Ishmael \u201ca great nation.\u201d This volume honors her alongside the Women of the Bible, the Twelve disciples, the Fruit of the Spirit, and the Parables of Jesus."]},
+  v5:{quote:"And they compel one Simon a Cyrenian, who passed by, coming out of the country, the father of Alexander and Rufus, to bear his cross.",ref:"Mark 15:21",
+    paras:["A man from North Africa carried the cross of Christ. Africans were part of the Church from its first days. Simeon called Niger and Lucius of Cyrene led as prophets and teachers at Antioch, and Apollos of Alexandria was \u201cmighty in the scriptures.\u201d This volume follows their witness through the Miracles of Jesus, the Resurrection, Paul\u2019s Journeys, and the whole Armour of God."]},
+  se:{quote:"Princes shall come out of Egypt; Ethiopia shall soon stretch out her hands unto God.",ref:"Psalm 68:31",
+    paras:["From the river that compassed Ethiopia in Eden to the Cyrenian who carried the cross, Africa\u2019s story runs through the whole of Scripture. This special edition gathers every theme in the Stretch Forth series into one book: Cush and Ethiopia, Egypt, the Queen of Sheba, Hagar, Africa in the Early Church, and twenty more, from Creation and the Psalms to the Resurrection."]}
+};
+const SERIES_LISTING={title:"Stretch Forth: A Bible Puzzle Series",quote:"Princes shall come out of Egypt; Ethiopia shall soon stretch out her hands unto God.",ref:"Psalm 68:31",
+  paras:["Stretch Forth is a Bible puzzle series that celebrates Africa\u2019s place in Scripture. From the river Gihon that \u201ccompasseth the whole land of Ethiopia\u201d to Simon of Cyrene carrying the cross, the Bible is woven through with African people and places. The Queen of Sheba journeyed to test the wisdom of Solomon. Hagar the Egyptian named the God who sees. Ebed-melech the Ethiopian rescued Jeremiah from the dungeon, and an Ethiopian official was baptized on the road to Gaza. Each volume brings these stories forward alongside beloved passages from Genesis to the Gospels.",
+    "Every puzzle is drawn from the King James Version. Crossword clues are verses with the answer left blank, so solving the puzzle means reading the Word."],
+  includes:["Word searches","Crosswords with King James verse clues","Word scrambles","Verse cryptograms","Verse fill-ins","A complete answer key"],
+  closing:"Each volume stands on its own and can be enjoyed in any order. The books suit personal devotion, Bible study groups, homeschool families, church gifts and Black History Month programs."};
 const findPal=id=>PALETTES.find(p=>p.id===id||p.alias===id)||PALETTES[0];
 const AFRICA_IDS=["cush","egypt","sheba","hagar","church"];
 // Kemetic ornaments: the kheker frieze (bundled reeds crowning tomb walls) and the lotus.
@@ -987,10 +1049,12 @@ function build(){
   $("#kdpset").innerHTML=`In KDP, choose: <b>Trim ${S.trim==="letter"?"8.5 × 11 in":"6 × 9 in"}</b> · <b>No bleed</b> · <b>Black &amp; white interior, ${S.paper} paper</b> · export the cover at this same trim. This book is <b>${np} pages</b>.`;
   fit();save();
   if(pview==="cover") renderCover();
+  if(pview==="listing") renderListing();
 }
 function refreshMeta(){
   $$('.sheet[data-kind="title"],.sheet[data-kind="copyright"]').forEach(s=>{delete s.dataset.filled;fillSheet(s)});
   if(pview==="cover") renderCover();
+  if(pview==="listing") renderListing();
   save();
 }
 function fit(){
@@ -1015,7 +1079,7 @@ function defaultBlurb(S){
   const kinds=S.types.map(t=>({search:"word searches",crossword:"crosswords",scramble:"word scrambles",crypto:"verse cryptograms",fill:"verse fill-ins"}[t]));
   const list=kinds.length>1?kinds.slice(0,-1).join(", ")+" and "+kinds.at(-1):kinds[0]||"puzzles";
   const span=names.length>1?` across ${names.length} themes, from ${names[0]} to ${names.at(-1)}`:names.length?` on ${names[0]}`:"";
-  const lead=S.series?`${S.volume&&/^vol/i.test(S.volume)?S.volume.replace(/^vol\.?\s*/i,"Volume ")+" of ":S.volume?`The ${S.volume} of `:""}${S.series}, a Bible puzzle series celebrating Africa in Scripture. `:"";
+  const lead=S.series?`${S.volume&&/^vol/i.test(S.volume)?S.volume.replace(/^vol\.?\s*/i,"Volume ")+" of ":S.volume?`The ${S.volume} of `:"Part of "}${S.series}, a Bible puzzle series celebrating Africa in Scripture. `:"";
   return `${lead}${n} puzzles drawn from the King James Bible: ${list}${span}. Every clue and verse is quoted from Scripture, and every puzzle has a full solution in the answer key.`;
 }
 function coverMotif(S,cols,rows,cellIn){
@@ -1124,9 +1188,9 @@ try{const z=localStorage.getItem("spp-czoom");if(["full","front","back"].include
 if("ResizeObserver" in window) new ResizeObserver(()=>{if(pview==="cover")fitCover()}).observe($("#coverView"));
 function setPView(v){
   pview=v;
-  $("#v-int").setAttribute("aria-pressed",v==="interior");$("#v-cov").setAttribute("aria-pressed",v==="cover");
-  $("#book").hidden=v==="cover";$("#coverView").hidden=v!=="cover";
-  if(v==="cover"){$("#flag").hidden=true;renderCover()}else{$("#flag").hidden=!$("#flag").textContent;fit()}
+  $("#v-int").setAttribute("aria-pressed",v==="interior");$("#v-cov").setAttribute("aria-pressed",v==="cover");$("#v-lst").setAttribute("aria-pressed",v==="listing");
+  $("#book").hidden=v!=="interior";$("#coverView").hidden=v!=="cover";$("#listView").hidden=v!=="listing";
+  if(v==="cover"){$("#flag").hidden=true;renderCover()}else if(v==="listing"){$("#flag").hidden=true;renderListing()}else{$("#flag").hidden=!$("#flag").textContent;fit()}
   try{localStorage.setItem("spp-pview",v)}catch(e){}
 }
 function printCover(){
@@ -1142,6 +1206,47 @@ function printCover(){
 let savedZoom=null;try{savedZoom=localStorage.getItem("spp-czoom")}catch(e){}
 if(!savedZoom&&window.matchMedia&&matchMedia("(max-width:600px)").matches) coverZoom="front";
 ["full","front","back"].forEach(id=>$("#cz-"+id).setAttribute("aria-pressed",id===coverZoom));
+/* ---------- KDP listing ---------- */
+const TYPE_BULLET={search:"Word searches",crossword:"Crosswords with King James verse clues",scramble:"Word scrambles",crypto:"Verse cryptograms",fill:"Verse fill-ins"};
+function currentListingId(S){
+  const P=PRESETS.find(p=>p.title.toLowerCase()===S.title.toLowerCase())||PRESETS.find(p=>p.volume.toLowerCase()===S.volume.toLowerCase());
+  return P?P.id:null;
+}
+function buildListing(S){
+  // Returns {text, html} for the current book. Volumes use their written description; other books get one built from settings.
+  const id=currentListingId(S), L=id&&LISTINGS[id], n=state.count;
+  const bullets=[...S.types.map(t=>TYPE_BULLET[t]),...(S.key?["A complete answer key"]:[])];
+  const quote=L?L.quote:(VERSES[S.verse]||VERSES.ps68).text, ref=L?L.ref:(VERSES[S.verse]||VERSES.ps68).ref;
+  const paras=L?L.paras:[defaultBlurb(S)];
+  const lead=`${n} puzzles drawn from the King James Version:`;
+  const text=`\u201c${quote}\u201d ${ref}\n\n${paras.join("\n\n")}\n\n${L?lead+"\n":""}${L?bullets.map(b=>"\u2022 "+b).join("\n"):""}`.trim();
+  const html=`<p><i>\u201c${esc(quote)}\u201d ${esc(ref)}</i></p>${paras.map(x=>`<p>${esc(x)}</p>`).join("")}${L?`<p><b>${esc(lead)}</b></p><ul>${bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`:""}`;
+  return {id,text,html};
+}
+function buildSeriesListing(){
+  const L=SERIES_LISTING, vols=PRESETS.map(p=>p.id==="se"?`Special Edition: ${p.title}, the complete collection`:`${p.volume}: ${p.title}`);
+  const text=`${L.title}\n\n\u201c${L.quote}\u201d ${L.ref}\n\n${L.paras.join("\n\n")}\n\nEach volume includes:\n${L.includes.map(b=>"\u2022 "+b).join("\n")}\n\nThe series:\n${vols.map(v=>"\u2022 "+v).join("\n")}\n\n${L.closing}`;
+  const html=`<p><b>${esc(L.title)}</b></p><p><i>\u201c${esc(L.quote)}\u201d ${esc(L.ref)}</i></p>${L.paras.map(x=>`<p>${esc(x)}</p>`).join("")}<p><b>Each volume includes:</b></p><ul>${L.includes.map(b=>`<li>${esc(b)}</li>`).join("")}</ul><p><b>The series:</b></p><ul>${vols.map(v=>`<li>${esc(v)}</li>`).join("")}</ul><p>${esc(L.closing)}</p>`;
+  return {text,html};
+}
+function countLabel(el,str){const n=str.length;el.textContent=`${n.toLocaleString()} of 4,000 characters`;el.classList.toggle("warn",n>4000)}
+function renderListing(){
+  const S=settings(), D=buildListing(S), SL=buildSeriesListing();
+  $("#lstDesc").innerHTML=D.html;countLabel($("#lstCount"),D.html);
+  $("#lstSeries").innerHTML=SL.html;countLabel($("#lstSerCount"),SL.html);
+  const volNum=(S.volume.match(/\d+/)||[""])[0];
+  const fields=[["Title",S.title],["Subtitle",S.subtitle],["Series",S.series],["Volume number",volNum||(S.volume?"(leave blank for "+S.volume+")":"")],["Author",S.author||"(add your name in Book & series)"],["Trim size",S.trim==="letter"?"8.5 x 11 in":"6 x 9 in"],["Pages",String(state.pages.length)]];
+  $("#lstFields").innerHTML=fields.map(([k,v],i)=>`<dt>${k}</dt><dd>${esc(v)}</dd><button type="button" data-cp="${i}">Copy</button>`).join("");
+  $("#lstFields").querySelectorAll("button").forEach(b=>b.onclick=()=>copyText(fields[+b.dataset.cp][1],b));
+  $("#cpDesc").onclick=e=>copyText(D.text,e.currentTarget);$("#cpDescHtml").onclick=e=>copyText(D.html,e.currentTarget);
+  $("#cpSeries").onclick=e=>copyText(SL.text,e.currentTarget);$("#cpSeriesHtml").onclick=e=>copyText(SL.html,e.currentTarget);
+}
+function copyText(str,btn){
+  const label=btn.textContent, done=ok=>{btn.textContent=ok?"Copied":"Press Ctrl+C";setTimeout(()=>btn.textContent=label,1600)};
+  const fallback=()=>{const t=$("#cpFallback");t.value=str;t.select();let ok=false;try{ok=document.execCommand("copy")}catch(e){}done(ok)};
+  try{navigator.clipboard.writeText(str).then(()=>done(true),fallback)}catch(e){fallback()}
+}
+
 /* ---------- direct cover PDF (no print dialog) ---------- */
 function loadScript(src){
   return new Promise((ok,fail)=>{if(window.jspdf)return ok();const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=()=>fail(new Error("Could not load the PDF library. Check your internet connection."));document.head.appendChild(s)});
@@ -1198,6 +1303,7 @@ async function downloadCoverPDF(){
 }
 $("#v-int").onclick=()=>setPView("interior");
 $("#v-cov").onclick=()=>setPView("cover");
+$("#v-lst").onclick=()=>setPView("listing");
 
 /* ---------- presets ---------- */
 $("#preset").innerHTML=`<option value="">Custom (keep my settings)</option>`+PRESETS.map(p=>`<option value="${p.id}">${esc(p.label)}</option>`).join("");
@@ -1249,7 +1355,7 @@ let topLevel=false;try{topLevel=window.self===window.top}catch(e){}
 if(topLevel){$("#dlCover").hidden=false;$("#dlnote").hidden=false;$("#dlCover").onclick=downloadCoverPDF;$("#printCover").hidden=false;$("#printCover").onclick=printCover;$("#print").hidden=false;$("#printnote").textContent="Print with margins set to None and background graphics on. Each proof becomes one page at the chosen trim size.";$("#print").onclick=()=>{fillAll();window.print()}}
 $("#topfrieze").innerHTML=frieze("appfrz",.16,["#C8A84B","#4F7FD0","#45B3A8","#CF6542"]);
 restore();
-try{const v=localStorage.getItem("spp-pview");if(v==="cover")pview="cover"}catch(e){}
+try{const v=localStorage.getItem("spp-pview");if(v==="cover"||v==="listing")pview=v}catch(e){}
 setPView(pview);
 try{const v=localStorage.getItem("spp-view");if(v==="settings"||v==="proofs")setView(v)}catch(e){}
 build();

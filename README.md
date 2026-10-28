@@ -43,6 +43,8 @@ Open `index.html` in Chrome or Edge, or enable GitHub Pages on this repo (Settin
 3. Click **Print / Save as PDF** for the interior, with margins set to **None**.
 4. Switch to **Cover** and click **Download cover PDF**. It builds the full-colour cover at 300 dpi and the exact KDP size without the print dialog. **Print cover / Save as PDF** remains as a fallback (turn on Background graphics).
 
+5. Open **KDP listing** for the book's title, subtitle, series, volume number and description, each with a copy button. The description matches the volume and its real puzzle count. The series description for KDP's series page is there too.
+
 Upload the cover only after the interior is final: any change to the page count changes the spine width.
 
 ## Project layout
