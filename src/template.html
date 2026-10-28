@@ -425,6 +425,7 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
       <label class="f">Colour scheme</label>
       <div class="swatches" role="radiogroup" aria-label="Cover colour scheme" id="swatches"></div>
       <label class="f">Back cover verse<select id="verse">
+        <option value="auto">Same as the book description (recommended)</option>
         <option value="ps68">Psalm 68:31 · Ethiopia shall soon stretch out her hands</option>
         <option value="ps119">Psalm 119:11 · Thy word have I hid in mine heart</option>
       </select></label>
@@ -771,7 +772,7 @@ function settings(){
     blurb:$("#blurb").value.trim(),guides:$("#guides").checked,orn:($("input[name=orn]:checked")||{}).value||"kemetic"};
 }
 function save(){
-  try{const S=settings();S.title=$("#title").value;S.blurb=$("#blurb").value;S.seed=seed;S.v=4;localStorage.setItem(STORE,JSON.stringify(S))}catch(e){}
+  try{const S=settings();S.title=$("#title").value;S.blurb=$("#blurb").value;S.seed=seed;S.v=5;localStorage.setItem(STORE,JSON.stringify(S))}catch(e){}
 }
 function restore(){
   let S=null;try{S=JSON.parse(localStorage.getItem(STORE)||"null")}catch(e){}
@@ -782,7 +783,8 @@ function restore(){
   if(typeof S.author==="string")$("#author").value=S.author;
   if(typeof S.series==="string")$("#series").value=S.series;
   if(typeof S.volume==="string")$("#volume").value=S.volume;
-  if(S.verse&&VERSES[S.verse])$("#verse").value=S.verse;
+  if(S.verse&&(S.verse==="auto"||VERSES[S.verse]))$("#verse").value=S.verse;
+  if((S.v||0)<5&&S.verse==="ps68")$("#verse").value="auto";  // one-time move to the description-matched verse
   set(`input[name=trim][value="${S.trim}"]`,true);
   set(`input[name=diff][value="${S.diff}"]`,true);
   set(`input[name=sets][value="${S.sets}"]`,true);
@@ -1121,7 +1123,7 @@ function renderCover(){
   const kinds=S.types.map(t=>({search:"Word searches",crossword:"Crosswords with verse clues",scramble:"Word scrambles",crypto:"Verse cryptograms",fill:"Verse fill-ins"}[t]));
   const back=`<div class="cv-panel cv-back" style="left:${b}in;top:${b}in;width:${T.w}in;height:${T.h}in;padding:${.85*sc+.2}in ${.7*sc+.2}in ${bc.h+bc.inset+.35}in;gap:${.24*sc+.08}in">
     <div class="cv-frz" style="top:.42in;left:.42in;right:.42in">${frieze("cvk",.2*sc+.08,[pal.accent,pal.acc2])}</div>
-    <p class="cv-quote" style="font-size:${pt(19)}">“${(VERSES[S.verse]||VERSES.ps68).text}”<cite style="font-size:${pt(9)}">${(VERSES[S.verse]||VERSES.ps68).ref}</cite></p>
+    <p class="cv-quote" style="font-size:${pt(19)}">“${esc(bookVerse(S).text)}”<cite style="font-size:${pt(9)}">${bookVerse(S).ref}</cite></p>
     <p class="cv-blurb" style="font-size:${pt(13.5)}">${esc(blurb)}</p>
     <ul class="cv-list" style="font-size:${pt(11)}">${kinds.map(k=>`<li>${k}</li>`).join("")}<li>${S.diff[0].toUpperCase()+S.diff.slice(1)} difficulty${S.large?", large print":""}</li><li>Complete answer key</li></ul>
   </div>`;
@@ -1212,11 +1214,16 @@ function currentListingId(S){
   const P=PRESETS.find(p=>p.title.toLowerCase()===S.title.toLowerCase())||PRESETS.find(p=>p.volume.toLowerCase()===S.volume.toLowerCase());
   return P?P.id:null;
 }
+function bookVerse(S){
+  // "auto" uses the opening verse of this volume's KDP description, so the back cover and listing always agree.
+  if(S.verse==="auto"){const id=currentListingId(S);if(id&&LISTINGS[id])return {text:LISTINGS[id].quote,ref:LISTINGS[id].ref};return VERSES.ps68}
+  return VERSES[S.verse]||VERSES.ps68;
+}
 function buildListing(S){
   // Returns {text, html} for the current book. Volumes use their written description; other books get one built from settings.
   const id=currentListingId(S), L=id&&LISTINGS[id], n=state.count;
   const bullets=[...S.types.map(t=>TYPE_BULLET[t]),...(S.key?["A complete answer key"]:[])];
-  const quote=L?L.quote:(VERSES[S.verse]||VERSES.ps68).text, ref=L?L.ref:(VERSES[S.verse]||VERSES.ps68).ref;
+  const bv=bookVerse(S), quote=bv.text, ref=bv.ref;
   const paras=L?L.paras:[defaultBlurb(S)];
   const lead=`${n} puzzles drawn from the King James Version:`;
   const text=`\u201c${quote}\u201d ${ref}\n\n${paras.join("\n\n")}\n\n${L?lead+"\n":""}${L?bullets.map(b=>"\u2022 "+b).join("\n"):""}`.trim();
@@ -1309,7 +1316,7 @@ $("#v-lst").onclick=()=>setPView("listing");
 $("#preset").innerHTML=`<option value="">Custom (keep my settings)</option>`+PRESETS.map(p=>`<option value="${p.id}">${esc(p.label)}</option>`).join("");
 function applyPreset(id){
   const P=PRESETS.find(p=>p.id===id); if(!P) return;
-  $("#series").value="Stretch Forth";$("#volume").value=P.volume;$("#title").value=P.title;$("#subtitle").value=P.subtitle||SUB;$("#verse").value="ps68";
+  $("#series").value="Stretch Forth";$("#volume").value=P.volume;$("#title").value=P.title;$("#subtitle").value=P.subtitle||SUB;$("#verse").value="auto";
   $$(".th").forEach(x=>x.checked=P.themes==="all"||P.themes.includes(x.value));
   const pal=$("#pal-"+P.pal);if(pal)pal.checked=true;
   const sets=$("#s"+(P.sets||3));if(sets)sets.checked=true;
