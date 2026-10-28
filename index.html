@@ -23,6 +23,8 @@
 }
 
 *{box-sizing:border-box}
+/* Anything marked hidden stays hidden, even where a layout rule sets display (the downloaded file has no viewer reset). */
+[hidden]{display:none!important}
 body{background:var(--bg);color:var(--fg);font-family:var(--a-ui);font-weight:300;font-size:14px}
 .top{max-width:1280px;margin:0 auto;padding-block:20px 0;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));
   display:flex;align-items:center;gap:16px;flex-wrap:wrap}
