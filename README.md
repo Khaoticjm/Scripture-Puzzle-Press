@@ -41,7 +41,7 @@ Open `index.html` in Chrome or Edge, or enable GitHub Pages on this repo (Settin
 1. Choose themes, puzzle types, difficulty, trim and print size.
 2. Check the **Page proofs**. The "KDP ready" badge confirms the page-count rules are met.
 3. Click **Print / Save as PDF** for the interior, with margins set to **None**.
-4. Switch to **Cover** and click **Print cover / Save as PDF**.
+4. Switch to **Cover** and click **Download cover PDF**. It builds the full-colour cover at 300 dpi and the exact KDP size without the print dialog. **Print cover / Save as PDF** remains as a fallback (turn on Background graphics).
 
 Upload the cover only after the interior is final: any change to the page count changes the spine width.
 

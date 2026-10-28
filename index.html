@@ -118,7 +118,7 @@ main{display:flex;flex-direction:column;gap:14px;min-width:0}
 
 .ws{display:grid;width:max-content;margin:0 auto;border:1.5px solid var(--ink);font-family:var(--f-ui);font-weight:600}
 .ws span{display:flex;align-items:center;justify-content:center}
-.ws span.on{background:var(--hl);border-radius:40%}
+.ws span.on{background:var(--hl);border-radius:40%;box-shadow:none;outline:1px solid #8A8A8A;outline-offset:-2px}
 .ws span.off{color:var(--ink-faint)}
 .wl{display:grid;gap:.04in .2in;margin:.2in auto 0;font-family:var(--f-ui);font-size:10pt;letter-spacing:.06em}
 .lp .wl{font-size:13pt}
@@ -205,6 +205,7 @@ main{display:flex;flex-direction:column;gap:14px;min-width:0}
 .cwrap{overflow:hidden;outline:1px solid var(--gold-muted);outline-offset:4px;box-shadow:0 10px 30px rgba(0,0,0,.6);align-self:center}
 .cover{position:relative;transform-origin:top left;overflow:hidden;font-family:var(--f-body);-webkit-print-color-adjust:exact;print-color-adjust:exact}
 .cv-panel{position:absolute;top:0;bottom:0}
+.cv-field{position:absolute;inset:0;display:block}
 .cv-front{display:flex;flex-direction:column;align-items:center;text-align:center}
 .cv-frame{position:absolute;border:1.5px solid var(--cv-accent)}
 .cv-frame::after{content:"";position:absolute;inset:.07in;border:.5px solid var(--cv-accent);opacity:.7}
@@ -212,10 +213,7 @@ main{display:flex;flex-direction:column;gap:14px;min-width:0}
 .cv-title{font-family:var(--f-display);font-weight:400;line-height:1.04;margin:0;text-wrap:balance;letter-spacing:.015em}
 .cv-sub{font-style:italic;margin:0;text-wrap:balance;opacity:.92}
 .cv-author{font-family:var(--f-ui);font-weight:600;letter-spacing:.22em;text-transform:uppercase}
-.cv-grid{display:grid;font-family:var(--f-ui);font-weight:600;color:var(--cv-ink)}
-.cv-grid span{display:flex;align-items:center;justify-content:center;opacity:.32}
-.cv-grid span.h{opacity:1;color:var(--cv-bg);background:var(--cv-accent);border-radius:999px}
-.cv-grid span.h.l{border-radius:999px 0 0 999px}.cv-grid span.h.m{border-radius:0}.cv-grid span.h.r{border-radius:0 999px 999px 0}
+.cv-grid{display:block}
 .cv-orn{display:flex;align-items:center;gap:.12in;color:var(--cv-accent)}
 .cv-orn::before,.cv-orn::after{content:"";height:1px;width:.8in;background:currentColor}
 .cv-orn i{width:.09in;height:.09in;border:1px solid currentColor;transform:rotate(45deg)}
@@ -414,7 +412,9 @@ body.print-cover #book,body.print-cover .cap{display:none!important}
       </select></label>
       <label class="f">Back cover description<textarea id="blurb" placeholder="Leave blank to use a description written from your settings."></textarea></label>
       <label class="chk"><input type="checkbox" id="guides" checked>Show trim, bleed and safe-zone guides</label>
-      <button class="btn" type="button" id="printCover" hidden>Print cover / Save as PDF</button>
+      <button class="btn" type="button" id="dlCover" hidden>Download cover PDF</button>
+      <button class="btn ghost" type="button" id="printCover" hidden>Print cover / Save as PDF</button>
+      <p class="note" id="dlnote" hidden>Download builds the full-colour cover at 300 dpi and the exact KDP size, without the print dialog. Use Print only if the download doesn't work in your browser.</p>
     </fieldset>
 
     <fieldset>
@@ -1022,17 +1022,18 @@ function defaultBlurb(S){
   return `${lead}${n} puzzles drawn from the King James Bible: ${list}${span}. Every clue and verse is quoted from Scripture, and every puzzle has a full solution in the answer key.`;
 }
 function coverMotif(S,cols,rows,cellIn){
-  // A small word-search panel with a word from the title circled.
+  // A small word-search panel with a word from the title circled. Drawn as SVG so the gold pill
+  // prints even when the browser's "Background graphics" option is off.
   const words=(S.title.toUpperCase().match(/[A-Z]+/g)||[]).filter(w=>w.length>=3&&w.length<=cols).sort((a,b)=>b.length-a.length);
   const word=words[0]||"WORD", R=rng(hashStr(S.title+"|cover")), row=Math.floor(rows/2), start=Math.floor((cols-word.length)/2);
-  const fill="ABCDEFGHIJKLMNOPRSTUVWY";let html="";
+  const fill="ABCDEFGHIJKLMNOPRSTUVWY", u=10;let txt="";
   for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){
     const inW=r===row&&c>=start&&c<start+word.length;
     const ch=inW?word[c-start]:fill[Math.floor(R()*fill.length)];
-    const pos=!inW?"":word.length===1?"":c===start?" l":c===start+word.length-1?" r":" m";
-    html+=`<span class="${inW?"h"+pos:""}">${ch}</span>`;
+    txt+=`<text x="${c*u+u/2}" y="${r*u+u/2}" style="fill:var(${inW?"--cv-bg":"--cv-ink"});opacity:${inW?1:.32}">${ch}</text>`;
   }
-  return `<div class="cv-grid" style="grid-template-columns:repeat(${cols},${cellIn}in);grid-auto-rows:${cellIn}in;font-size:${(cellIn*.5*72).toFixed(1)}pt">${html}</div>`;
+  const pill=`<rect x="${start*u+.6}" y="${row*u+.9}" width="${word.length*u-1.2}" height="${u-1.8}" rx="${(u-1.8)/2}" style="fill:var(--cv-accent)"/>`;
+  return `<svg class="cv-grid" viewBox="0 0 ${cols*u} ${rows*u}" style="width:${cols*cellIn}in;height:${rows*cellIn}in;overflow:visible" aria-hidden="true"><g text-anchor="middle" dominant-baseline="central" style="font-family:var(--f-ui);font-weight:600;font-size:5px">${pill}${txt}</g></svg>`;
 }
 function renderCover(){
   const S=settings(), C=coverDims(S), {T,K}=C, b=K.bleed, pal=findPal(S.palette);
@@ -1085,7 +1086,10 @@ function renderCover(){
   }
   const el=$("#cover");
   el.style.cssText=`width:${C.W}in;height:${C.H}in;background:${pal.bg};color:${pal.ink};--cv-bg:${pal.bg};--cv-ink:${pal.ink};--cv-accent:${pal.accent}`;
-  el.innerHTML=back+spine+front+g;
+  // The colour field is an SVG rectangle, not a CSS background, so it prints whatever the print dialog's
+  // "Background graphics" setting is.
+  const field=`<svg class="cv-field" width="100%" height="100%" aria-hidden="true"><rect width="100%" height="100%" fill="${pal.bg}"/></svg>`;
+  el.innerHTML=field+back+spine+front+g;
   // Keep spine text inside the spine's length (with 0.25 in clear at each end): shrink, then drop the author if needed.
   const sp=el.querySelector(".cv-spine");
   if(sp&&spineOK&&sp.clientHeight){
@@ -1141,6 +1145,60 @@ function printCover(){
 let savedZoom=null;try{savedZoom=localStorage.getItem("spp-czoom")}catch(e){}
 if(!savedZoom&&window.matchMedia&&matchMedia("(max-width:600px)").matches) coverZoom="front";
 ["full","front","back"].forEach(id=>$("#cz-"+id).setAttribute("aria-pressed",id===coverZoom));
+/* ---------- direct cover PDF (no print dialog) ---------- */
+function loadScript(src){
+  return new Promise((ok,fail)=>{if(window.jspdf)return ok();const s=document.createElement("script");s.src=src;s.onload=ok;s.onerror=()=>fail(new Error("Could not load the PDF library. Check your internet connection."));document.head.appendChild(s)});
+}
+async function embedFonts(){
+  // Inline the cover's web fonts as data URIs; an SVG image cannot fetch fonts on its own.
+  try{
+    const link=document.querySelector('link[href*="fonts.googleapis.com"]'); if(!link) return "";
+    const css=await (await fetch(link.href)).text();
+    const keep=["Marcellus","Crimson Pro","Archivo"];
+    const blocks=(css.match(/@font-face\s*{[^}]*}/g)||[]).filter(b=>keep.some(f=>b.includes(`'${f}'`)||b.includes(`"${f}"`))&&(!/unicode-range/.test(b)||/U\+0000-00FF/i.test(b)));
+    const out=[];
+    for(const b of blocks){
+      const m=b.match(/url\(([^)]+)\)/); if(!m){out.push(b);continue}
+      const blob=await (await fetch(m[1].replace(/["']/g,""))).blob();
+      const data=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(blob)});
+      out.push(b.replace(m[0],`url(${data})`));
+    }
+    return out.join("\n");
+  }catch(e){return ""}
+}
+async function downloadCoverPDF(){
+  const btn=$("#dlCover"), label=btn.textContent; btn.disabled=true; btn.textContent="Building PDF…";
+  const guides=$("#guides").checked;
+  try{
+    await loadScript("https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js");
+    if(pview!=="cover") setPView("cover");
+    $("#guides").checked=false; renderCover();
+    const S=settings(), C=coverDims(S), node=$("#cover").cloneNode(true);
+    node.style.transform="none";
+    $("#guides").checked=guides; renderCover();
+    const css=[...document.querySelectorAll("style")].map(x=>x.textContent).join("\n")+"\n"+await embedFonts();
+    const Wpx=C.W*PX, Hpx=C.H*PX, dpi=300, cw=Math.round(C.W*dpi), ch=Math.round(C.H*dpi);
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="${cw}" height="${ch}" viewBox="0 0 ${Wpx} ${Hpx}"><foreignObject x="0" y="0" width="${Wpx}" height="${Hpx}"><div xmlns="http://www.w3.org/1999/xhtml" style="margin:0"><style><![CDATA[${css}]]></style>${new XMLSerializer().serializeToString(node)}</div></foreignObject></svg>`;
+    const img=new Image(); img.src="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(svg);
+    await img.decode();
+    const cv=document.createElement("canvas"); cv.width=cw; cv.height=ch;
+    const ctx=cv.getContext("2d"); ctx.fillStyle=findPal(S.palette).bg; ctx.fillRect(0,0,cw,ch); ctx.drawImage(img,0,0,cw,ch);
+    const jpg=cv.toDataURL("image/jpeg",.95);
+    const pdf=new window.jspdf.jsPDF({orientation:"landscape",unit:"in",format:[C.W,C.H],compress:true});
+    pdf.setProperties({title:`${S.title} cover`});
+    pdf.addImage(jpg,"JPEG",0,0,C.W,C.H);
+    const name=(S.title+(S.volume?" "+S.volume:"")+" cover "+(S.trim==="letter"?"8.5x11":"6x9")).replace(/[^\w.-]+/g,"-").replace(/-+/g,"-");
+    pdf.save(name+".pdf");
+    btn.textContent="Downloaded";
+  }catch(e){
+    console.error(e);
+    btn.textContent="Download failed";
+    $("#dlnote").textContent="This browser could not build the PDF directly ("+(e&&e.message||"unknown error")+"). Use Chrome or Edge, or use Print cover with Background graphics turned on.";
+  }finally{
+    $("#guides").checked=guides;
+    setTimeout(()=>{btn.textContent=label;btn.disabled=false},2500);
+  }
+}
 $("#v-int").onclick=()=>setPView("interior");
 $("#v-cov").onclick=()=>setPView("cover");
 
@@ -1191,7 +1249,7 @@ $("#tab-proofs").onclick=()=>setView("proofs");
 $("#shuffle2").onclick=()=>{reshuffle();setView("proofs")};
 // Printing only works when this page is opened directly in a browser tab.
 let topLevel=false;try{topLevel=window.self===window.top}catch(e){}
-if(topLevel){$("#printCover").hidden=false;$("#printCover").onclick=printCover;$("#print").hidden=false;$("#printnote").textContent="Print with margins set to None and background graphics on. Each proof becomes one page at the chosen trim size.";$("#print").onclick=()=>{fillAll();window.print()}}
+if(topLevel){$("#dlCover").hidden=false;$("#dlnote").hidden=false;$("#dlCover").onclick=downloadCoverPDF;$("#printCover").hidden=false;$("#printCover").onclick=printCover;$("#print").hidden=false;$("#printnote").textContent="Print with margins set to None and background graphics on. Each proof becomes one page at the chosen trim size.";$("#print").onclick=()=>{fillAll();window.print()}}
 $("#topfrieze").innerHTML=frieze("appfrz",.16,["#C8A84B","#4F7FD0","#45B3A8","#CF6542"]);
 restore();
 try{const v=localStorage.getItem("spp-pview");if(v==="cover")pview="cover"}catch(e){}
